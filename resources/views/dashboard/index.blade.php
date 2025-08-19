@@ -41,27 +41,7 @@
         </div>
     </div>
 
-    {{-- Upload CSV Section --}}
-    <div class="bg-white p-4 shadow rounded mt-6">
-        <h2 class="text-lg font-semibold mb-4">Upload Bank CSV</h2>
+    {{-- Upload CSV Vue Component --}}
+    <div id="csv-upload"></div>
 
-        @if (session('success'))
-            <div class="bg-green-100 text-green-800 p-2 rounded mb-4">
-                {{ session('success') }}
-            </div>
-        @endif
-
-        <form method="POST" action="{{ route('expenses.upload') }}" enctype="multipart/form-data">
-            @csrf
-
-            <div class="mb-4">
-                <label for="csv" class="block mb-1 font-medium">CSV File</label>
-                <input type="file" name="csv" id="csv" required class="w-full border rounded p-2">
-            </div>
-
-            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">
-                Upload CSV
-            </button>
-        </form>
-    </div>
 @endsection
