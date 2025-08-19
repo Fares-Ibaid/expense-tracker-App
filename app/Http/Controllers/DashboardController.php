@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
+use App\Models\Expense;
 use Illuminate\Http\Request;
 
 class DashboardController extends Controller
@@ -9,20 +11,9 @@ class DashboardController extends Controller
 
     public function index()
     {
-        $expenses = collect([
-            (object)[
-                'description' => 'Starbucks',
-                'category' => (object)['name' => 'Food'],
-                'amount' => 5.25,
-                'date' => '2025-08-10',
-            ],
-            (object)[
-                'description' => 'Uber',
-                'category' => (object)['name' => 'Transport'],
-                'amount' => 12.80,
-                'date' => '2025-08-11',
-            ],
-        ]);
+        // read expenses from the database
+        $categories = Category::all();
+        $expenses = Expense::with('category')->get();
 
         $total = $expenses->sum('amount');
         $count = $expenses->count();

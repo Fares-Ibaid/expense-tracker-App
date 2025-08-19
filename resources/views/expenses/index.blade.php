@@ -61,7 +61,7 @@
                 <tr>
                     <td class="border border-gray-300 px-4 py-2">{{ $expense->description }}</td>
                     <td class="border border-gray-300 px-4 py-2">{{ number_format($expense->amount, 2) }}</td>
-                    <td class="border border-gray-300 px-4 py-2">{{ $expense->category->name }}</td>
+                    <td class="border border-gray-300 px-4 py-2"> {{ $expense->category ? $expense->category->name : 'No Category' }}</td>
                     <td class="border border-gray-300 px-4 py-2">{{ $expense->date }}</td>
                     <td class="border border-gray-300 px-4 py-2">
                         <button class="text-blue-600 hover:underline">Edit</button>

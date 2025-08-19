@@ -31,8 +31,8 @@
                 @foreach ($expenses as $expense)
                     <tr class="border-b hover:bg-gray-50">
                         <td class="py-2">{{ $expense->description }}</td>
-                        <td class="py-2">{{ $expense->category->name }}</td>
-                        <td class="py-2">${{ number_format($expense->amount, 2) }}</td>
+                        <td class="py-2">{{ $expense->category ? $expense->category->name : 'No Category' }}</td>
+                        <td class="py-2">{{ number_format($expense->amount, 2) }} €</td>
                         <td class="py-2">{{ $expense->date }}</td>
                     </tr>
                 @endforeach
