@@ -1,14 +1,13 @@
-<script setup>
-
-import CsvUpload from "@/components/CsvUpload.vue";
-</script>
 <template>
     <div>
-        <!-- This is intentionally left empty for now -->
-        <CsvUpload class="mb-4" />
+        <header class="mb-8">
+        </header>
+        <main>
+            <DashboardPage />
+        </main>
     </div>
 </template>
 
-<style scoped>
-
-</style>
+<script setup>
+import DashboardPage from './DashboardPage.vue';
+</script>

@@ -12,13 +12,9 @@
 
 <div class="container mx-auto px-4 py-6">
     <header class="mb-8">
-        <h1 class="text-3xl font-bold">💸 Expense Tracker</h1>
     </header>
     {{-- Vue app mount point --}}
     <div id="app"></div>
-
-    {{-- Page content --}}
-    @yield('content')
 </div>
 
 </body>

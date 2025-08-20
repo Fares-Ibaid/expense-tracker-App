@@ -18,6 +18,10 @@ class DashboardController extends Controller
         $total = $expenses->sum('amount');
         $count = $expenses->count();
 
-        return view('dashboard.index', compact('expenses', 'total', 'count'));
+        return response()->json([
+            'expenses' => $expenses,
+            'total' => $total,
+            'count' => $count,
+        ]);
     }
  }

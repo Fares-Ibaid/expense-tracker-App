@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Route;
 
 
 // ---------------------------------- Dashboard ----------------------------------
-Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+/*Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
 Route::get('dashboard', [DashboardController::class, 'index']);
 // ---------------------------------- Expenses ----------------------------------
 Route::get('/expenses', [ExpenseController::class, 'index'])->name('expenses.index');
@@ -15,5 +15,8 @@ Route::post('/expenses', [ExpenseController::class, 'store'])->name('expenses.st
 // ---------------------------------- Expense Upload ----------------------------------
 Route::post('/expenses/upload', [ExpenseUploadController::class, 'upload'])->name('expenses.upload');
 Route::post('/expenses/save', [ExpenseUploadController::class, 'save']);
+*/
 
-
+Route::get('/{any}', function () {
+    return view('layouts.app');
+})->where('any', '.*');
