@@ -2,6 +2,7 @@
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
 import TableView from "@/components/TableView.vue";
+import CsvUpload     from "@/components/CsvUpload.vue";
 
 const expenses = ref([]);
 const total = ref(0);
@@ -41,6 +42,11 @@ const columns = [
                 <p class="text-2xl font-bold text-blue-600">{{ count }}</p>
             </div>
         </div>
+
+        <!-- -- CSV Upload Component ------------->
+        <CsvUpload />
+
+        <!-------------------------------- table-view  ------------>
         <div class="mt-6">
             <h2 class="text-xl font-semibold mb-4">Expenses</h2>
             <TableView :columns="columns" :rows="expenses" />

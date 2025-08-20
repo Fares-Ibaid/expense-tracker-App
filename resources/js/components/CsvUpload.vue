@@ -21,7 +21,7 @@ const handleUpload = async () => {
     formData.append('csv', file.value)
 
     try {
-        const response = await axios.post('/expenses/upload', formData) ;
+        const response = await axios.post('api/expenses/upload', formData) ;
 
         // Mark each row with isValid flag
         rows.value = (response.data.data || []).map(row => ({
@@ -49,7 +49,7 @@ const handleSave = async() => {
         //console.log('Sending expenses:', rows.value) ;
 
         // sending data as json
-        const response = await axios.post('/expenses/save',{
+        const response = await axios.post('api/expenses/save',{
             expenses : validExpenses
         })
 
