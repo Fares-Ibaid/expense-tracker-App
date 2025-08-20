@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
+import TableView from "@/components/TableView.vue";
 
 const expenses = ref([]);
 const total = ref(0);
@@ -13,6 +14,18 @@ onMounted(async () => {
     total.value = response.data.total;
     count.value = response.data.count;
 });
+
+// define the columns for the table-view
+const columns = [
+    { key: 'description', label: 'Description' },
+    {
+        key: 'category',
+        label: 'Category',
+        formatter: (value) => value ? value.name : 'No Category'
+    },
+    { key: 'amount', label: 'Amount (€)' },
+    { key: 'date', label: 'Date' },
+];
 </script>
 
 <template>
@@ -30,13 +43,8 @@ onMounted(async () => {
         </div>
         <div class="mt-6">
             <h2 class="text-xl font-semibold mb-4">Expenses</h2>
-            <ul>
-<!--                <li v-for="expense in expenses" :key="expense.id" class="mb-2">
-                    {{ expense.category.name }}: {{ expense.amount }} €
-                </li>--><!--                <li v-for="expense in expenses" :key="expense.id" class="mb-2">
-                    {{ expense.category.name }}: {{ expense.amount }} €
-                </li>-->
-            </ul>
+            <TableView :columns="columns" :rows="expenses" />
+
         </div>
     </div>
 </template>
