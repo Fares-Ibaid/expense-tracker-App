@@ -3,6 +3,7 @@ import { ref, onMounted } from 'vue';
 import axios from 'axios';
 import TableView from "@/components/TableView.vue";
 import CsvUpload     from "@/components/CsvUpload.vue";
+import SettingsPanel from "@/components/SettingsPanel.vue";
 
 const expenses = ref([]);
 const total = ref(0);
@@ -27,6 +28,13 @@ const columns = [
     { key: 'amount', label: 'Amount (€)' },
     { key: 'date', label: 'Date' },
 ];
+
+// show settings panel
+const showSettings = ref(true)
+
+const toggleSettingsPanel = () => {
+    showSettings.value = !showSettings.value
+}
 </script>
 
 <template>
@@ -50,7 +58,17 @@ const columns = [
         <div class="mt-6">
             <h2 class="text-xl font-semibold mb-4">Expenses</h2>
             <TableView :columns="columns" :rows="expenses" />
+        </div>
 
+
+        <!-- Right-Side Settings Panel (slide-over style) -->
+        <div v-if="showSettings" class="w-80 bg-white shadow-lg p-4 border-l">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-semibold">Settings</h2>
+                <button @click="toggleSettingsPanel" class="text-gray-600 hover:text-gray-800">x</button>
+            </div>
+
+            <SettingsPanel />
         </div>
     </div>
 </template>

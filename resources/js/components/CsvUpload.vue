@@ -5,6 +5,14 @@ import axios from 'axios'
 const file = ref(null)
 const successMessage = ref(null)
 const error = ref(null)
+const categories = [
+  'Lebensmittel',
+    'Essen & Trinken',
+   'Strom',
+    'Transport',
+    'Abonnements'
+]
+
 const rows = ref([])
 
 const onFileChange = (event) => {
@@ -26,7 +34,8 @@ const handleUpload = async () => {
         // Mark each row with isValid flag
         rows.value = (response.data.data || []).map(row => ({
             ...row,
-            isValid: !!(row.date && row.description && row.amount)
+            isValid: !!(row.date && row.description && row.amount),
+            category: row.category || null // Ensure category is defined
         }))
 
         successMessage.value = response.data.message || 'Upload successful!'
@@ -91,12 +100,14 @@ const handleSave = async() => {
         <!-- Preview Table -->
         <div v-if="rows.length > 0" class="mt-6">
             <h3 class="font-semibold text-lg mb-2">Preview Parsed Data</h3>
+            <!-- ------------------------ Table for displaying parsed CSV data ------------------------ -->
             <table class="w-full text-sm border">
                 <thead class="bg-gray-100">
                 <tr>
                     <th class="border px-2 py-2 text-center align-middle">Date</th>
                     <th class="border px-2 py-2 text-center align-middle">Description</th>
                     <th class="border px-2 py-2 text-center align-middle">Amount</th>
+                    <th class="border px-2 py-2 text-center align-middle">Category</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -112,6 +123,18 @@ const handleSave = async() => {
                     <td class="border px-2 py-2 text-center align-middle">{{ row.description || '—' }}</td>
                     <td class="border px-2 py-2 text-center align-middle">
                         {{ row.amount !== undefined ? row.amount.toFixed(2) : '—' }}
+                    </td>
+                    <!-- resolve category rules  -->
+                    <td class="border px-2 py-2 text-center align-middle">
+                        <select
+                            v-model="row.category"
+                            class="w-full border rounded p-1"
+                        >
+                            <option disabled value="">Select a category</option>
+                            <option v-for="cat in categories" :key="cat" :value="cat">
+                                {{ cat }}
+                            </option>
+                        </select>
                     </td>
                 </tr>
                 </tbody>

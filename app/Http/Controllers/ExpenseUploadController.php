@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 use App\Models\Expense;
+use App\Models\Category;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
@@ -12,6 +13,15 @@ use Illuminate\Support\Facades\Log;
 
 class ExpenseUploadController extends Controller
 {
+    // hard-coded category rules
+    private array $categoryRules = [
+        'EDEKA' => 'Lebensmittel',
+        'DM' => 'Essen & Trinken',
+        'Stadtwerke' => 'Strom',
+        'Benzin' => 'Transport',
+        'RSG Group GmbH' => 'Abonnements',
+    ];
+    
     public function upload(Request $request): \Illuminate\Http\JsonResponse
     {
         $request->validate([
@@ -51,6 +61,7 @@ class ExpenseUploadController extends Controller
                 'date' => $date,
                 'description' => trim($row['Beguenstigter/Zahlungspflichtiger']),
                 'amount' => $this->parseAmount($row['Betrag']),
+                'category' => $this->autoCategorize($row['Beguenstigter/Zahlungspflichtiger'])
             ];
         }
 
@@ -88,11 +99,24 @@ class ExpenseUploadController extends Controller
                 'date' => $item['date'],
                 'description' => $item['description'],
                 'amount' => $item['amount'],
-                'category_id' => null // ← will auto-match later
+                'category_id' => Category::where('name', $this->autoCategorize($item['description']))->value('id') // Map category
+
             ]);
         }
 
         return response()->json(['message' => 'Expenses saved successfully'], 201) ;
 
+    }
+    private function autoCategorize(string $description): string
+    {
+        $desc = strtolower($description);
+
+        foreach ($this->categoryRules as $keyword => $category) {
+            if (str_contains($desc, strtolower($keyword))) {
+                return $category;
+            }
+        }
+
+        return 'Uncategorized';
     }
 }
