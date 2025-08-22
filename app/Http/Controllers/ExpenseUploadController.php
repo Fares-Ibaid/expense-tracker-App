@@ -21,13 +21,25 @@ class ExpenseUploadController extends Controller
         'Benzin' => 'Transport',
         'RSG Group GmbH' => 'Abonnements',
     ];
-    
+
     public function upload(Request $request): \Illuminate\Http\JsonResponse
     {
         $request->validate([
             'csv' => ['required', 'file', 'mimes:csv,txt'],
         ]);
 
+
+        // retrieve date ,amount , user_id
+        $existingExpenses = Expense::select('date', 'amount', 'description')->get();
+
+        // reformat to map array for quick searching
+        $existingExpensesMap = $existingExpenses->map(function ($expense) {
+            return [
+                'date' => $expense->date,
+                'amount' => $expense->amount,
+                'description' => $expense->description,
+            ];
+        })->toArray();
 
         $path = $request->file('csv')->getRealPath();
         $raw = file_get_contents($path);
@@ -57,12 +69,18 @@ class ExpenseUploadController extends Controller
                 $date = null;
             }
 
-            $parsed[] = [
-                'date' => $date,
+            $csvRow = [
+                'date'        => $date,
+                'amount'      => $this->parseAmount($row['Betrag']),
                 'description' => trim($row['Beguenstigter/Zahlungspflichtiger']),
-                'amount' => $this->parseAmount($row['Betrag']),
-                'category' => $this->autoCategorize($row['Beguenstigter/Zahlungspflichtiger'])
             ];
+
+            // use map to check if the row already exists
+            $isDuplicated = collect($existingExpensesMap)->contains($csvRow);
+            $parsed[] = array_merge($csvRow, [
+                'category' => $this->autoCategorize($row['Beguenstigter/Zahlungspflichtiger']),
+                'duplicated' => $isDuplicated,
+            ]);
         }
 
         return response()->json([
@@ -76,7 +94,7 @@ class ExpenseUploadController extends Controller
         // Convert European format: "1.234,56" → 1234.56
         $clean = str_replace('.', '', $raw); // remove thousands
         $clean = str_replace(',', '.', $clean); // swap decimal
-        return (float) $clean;
+        return (float)$clean;
     }
 
     public function save(Request $request): \Illuminate\Http\JsonResponse
@@ -93,20 +111,19 @@ class ExpenseUploadController extends Controller
         $user_id = 1;
         // if the validation passes, you can save the expenses to the database
         foreach ($data['expenses'] as $item) {
-
             Expense::create([
                 'user_id' => $user_id,
                 'date' => $item['date'],
                 'description' => $item['description'],
                 'amount' => $item['amount'],
-                'category_id' => Category::where('name', $this->autoCategorize($item['description']))->value('id') // Map category
-
+                // Map category
+                'category_id' => Category::where('name', $this->autoCategorize($item['description']))->value('id')
             ]);
         }
 
-        return response()->json(['message' => 'Expenses saved successfully'], 201) ;
-
+        return response()->json(['message' => 'Expenses saved successfully'], 201);
     }
+
     private function autoCategorize(string $description): string
     {
         $desc = strtolower($description);
