@@ -99,18 +99,23 @@ class ExpenseUploadController extends Controller
 
     public function save(Request $request): \Illuminate\Http\JsonResponse
     {
-        //dd($request->all());
         $data = $request->validate([
             'expenses' => ['required', 'array'],
             'expenses.*.date' => ['required', 'date_format:Y-m-d'],
             'expenses.*.description' => ['required', 'string', 'max:255'],
             'expenses.*.amount' => ['required', 'numeric'],
+            'expenses.*.duplicated' => ['required', 'boolean'],
         ]);
+
+        // Filter out duplicated expenses
+        $nonDuplicatedExpenses = array_filter($data['expenses'], function ($item) {
+            return !$item['duplicated'];
+        });
 
         // hard codede user_id
         $user_id = 1;
         // if the validation passes, you can save the expenses to the database
-        foreach ($data['expenses'] as $item) {
+        foreach ($nonDuplicatedExpenses as $item) {
             Expense::create([
                 'user_id' => $user_id,
                 'date' => $item['date'],
