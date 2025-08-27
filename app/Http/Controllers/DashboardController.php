@@ -9,13 +9,13 @@ use Illuminate\Http\Request;
 class DashboardController extends Controller
  {
 
-    public function index()
+    public function index(Request $request)
     {
-        // read expenses from the database
-        $categories = Category::all();
-        $expenses = Expense::with('category')->get();
 
-        $total = $expenses->sum('amount');
+        $perPage  = $request->query('per_page', 5); // this will be changed dynamically from the frontend
+        $expenses = Expense::with('category')->paginate($perPage); // from laravel gives you Metadata
+
+        $total = $expenses->total();
         $count = $expenses->count();
 
         return response()->json([
@@ -23,5 +23,6 @@ class DashboardController extends Controller
             'total' => $total,
             'count' => $count,
         ]);
+
     }
  }
