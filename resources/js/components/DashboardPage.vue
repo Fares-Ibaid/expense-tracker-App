@@ -3,6 +3,7 @@ import { ref, onMounted } from 'vue';
 import axios from 'axios';
 import TableView from "@/components/TableView.vue";
 import CsvUpload     from "@/components/CsvUpload.vue";
+import FiltersPanel from "@/components/FiltersPanel.vue";
 import SettingsPanel from "@/components/SettingsPanel.vue";
 
 const expenses = ref([]);
@@ -14,20 +15,43 @@ const currentPage = ref(1);
 const perPage     = ref(10);
 const totalPages  = ref(0);
 
+const appliedFilters = ref({});
+
+// fetch expenses data on component mount and apply filters if any
+const fetchExpenses = async (filters = {}) => {
+    try {
+        const response = await axios.get('/api/dashboard', {
+            params: {
+                page: currentPage.value,
+                per_page: perPage.value,
+                ...filters,
+            },
+        });
+
+        console.log('API Response:', response.data); // Debugging the full response
+
+        // Extract the data key for rows
+        expenses.value = response.data.expenses.data; // Extract the array of expenses
+        total.value = response.data.total;
+        count.value = response.data.count;
+        totalPages.value = response.data.expenses.last_page;
+
+        console.log('Fetched expenses:', expenses.value); // Debugging the assigned value
+    } catch (error) {
+        console.error('Error fetching expenses:', error);
+    }
+};
+
 onMounted(async () => {
-    const response = await
-    axios.get(`/api/dashboard?page=${currentPage.value}&per_page=${perPage.value}`);
-    expenses.value = response.data.expenses.data;
-    total.value = response.data.total;
-    count.value = response.data.count;
-    totalPages.value = response.data.expenses.last_page;
+
+    fetchExpenses();
 });
-// handle page change
+
+// Handle page change
 const goToPage = async (page) => {
     if (page >= 1 && page <= totalPages.value) {
-        const response = await axios.get(`/api/dashboard?page=${page}&per_page=${perPage.value}`);
-        expenses.value = response.data.expenses.data;
-        currentPage.value = response.data.expenses.current_page;
+        await fetchExpenses({ ...appliedFilters.value, page });
+        currentPage.value = page;
     }
 };
 
@@ -49,6 +73,33 @@ const showSettings = ref(true)
 const toggleSettingsPanel = () => {
     showSettings.value = !showSettings.value
 }
+
+// toggle filter panel
+const showFilters = ref(false);
+const toggleFiltersPanel = () =>{
+    showFilters.value = !showFilters.value ;
+}
+
+// Handle filters applied from FiltersPanel
+const handleAppFilters = (filters) => {
+    console.log('Applied Filters:', filters); // Debugging the filters
+
+    // Reset date fields if they are empty
+    if (!filters.startDate) {
+        filters.startDate = null;
+    }
+    if (!filters.endDate) {
+        filters.endDate = null;
+    }
+
+    appliedFilters.value = filters; // Store the applied filters
+    fetchExpenses(filters); // Fetch data with the new filters
+};
+
+const resetFilters = () => {
+    appliedFilters.value = {}; // Clear all filters
+    fetchExpenses(); // Fetch data without filters
+};
 </script>
 
 <template>
@@ -67,6 +118,23 @@ const toggleSettingsPanel = () => {
 
         <!-- -- CSV Upload Component ------------->
         <CsvUpload />
+
+        <!--  toggle filters panel -->
+     <button
+         class="px-4 py-2 bg-gray-500 text-white rounded hover:bg-gray-600 mt-4"
+         @click="toggleFiltersPanel"
+     >
+            <label>
+                {{ showFilters ? 'Hide Filters' : 'Show Filters' }}
+            </label>
+        </button>
+        <!-- -- Filters Panel Component ------------->
+        <div v-if="showFilters" class="pt-4">
+            <FiltersPanel
+                @apply-filters="handleAppFilters"
+                @reset-filters="resetFilters"
+            />
+        </div>
 
         <!-------------------------------- table-view  ------------>
         <div class="mt-6">

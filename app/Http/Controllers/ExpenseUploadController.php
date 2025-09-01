@@ -64,7 +64,14 @@ class ExpenseUploadController extends Controller
             }
 
             try {
-                $date = Carbon::createFromFormat('d.m.Y', trim($row['Buchungstag']))->toDateString();
+                // toDo - handle year 20xx vs 19xx Bug here
+                $buchungstag = trim($row['Buchungstag']);
+                // Check if the year is two digits and prepend "20"
+                if (preg_match('/^\d{2}\.\d{2}\.\d{2}$/', $buchungstag)) {
+                    $buchungstag = preg_replace('/(\d{2}\.\d{2}\.)(\d{2})$/', '${1}20${2}', $buchungstag);
+                }
+
+                $date = Carbon::createFromFormat('d.m.Y', $buchungstag)->toDateString();
             } catch (\Exception $e) {
                 $date = null;
             }
