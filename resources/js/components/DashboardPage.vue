@@ -28,7 +28,7 @@ const fetchExpenses = async (filters = {}) => {
             },
         });
 
-        console.log('API Response:', response.data); // Debugging the full response
+       // console.log('API Response:', response.data); // Debugging the full response
 
         // Extract the data key for rows
         expenses.value = response.data.expenses.data; // Extract the array of expenses
@@ -36,7 +36,8 @@ const fetchExpenses = async (filters = {}) => {
         count.value = response.data.count;
         totalPages.value = response.data.expenses.last_page;
 
-        console.log('Fetched expenses:', expenses.value); // Debugging the assigned value
+       // console.log('Fetched expenses:', expenses.value); // Debugging the assigned value
+
     } catch (error) {
         console.error('Error fetching expenses:', error);
     }
@@ -82,7 +83,7 @@ const toggleFiltersPanel = () =>{
 
 // Handle filters applied from FiltersPanel
 const handleAppFilters = (filters) => {
-    console.log('Applied Filters:', filters); // Debugging the filters
+   // console.log('Applied Filters:', filters); // Debugging the filters
 
     // Reset date fields if they are empty
     if (!filters.startDate) {
