@@ -3,16 +3,15 @@
 namespace App\Http\Controllers;
 use App\Models\Expense;
 use App\Models\Category;
+use App\Traits\Filterable;
 use Carbon\Carbon;
-use Exception;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use League\Csv\Reader;
 use League\Csv\Statement;
-use Illuminate\Support\Facades\Log;
 
 class ExpenseUploadController extends Controller
 {
+    use Filterable ;
     // hard-coded category rules
     private array $categoryRules = [
         'EDEKA' => 'Lebensmittel',
@@ -147,5 +146,19 @@ class ExpenseUploadController extends Controller
         }
 
         return 'Uncategorized';
+    }
+
+    public  function summaryByCategory (Request $request)
+    {
+        $query = Expense::query();
+
+        // Apply filters using the trait
+        $this->applyFilters($request, $query);
+
+        $data = $query->selectRaw('category, SUM(amount) as total')
+            ->groupBy('category')
+            ->get();
+
+        return response()->json($data);
     }
 }

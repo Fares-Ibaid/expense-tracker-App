@@ -5,6 +5,7 @@ import TableView from "@/components/TableView.vue";
 import CsvUpload     from "@/components/CsvUpload.vue";
 import FiltersPanel from "@/components/FiltersPanel.vue";
 import SettingsPanel from "@/components/SettingsPanel.vue";
+import ChartPanel from "@/components/ChartPanel.vue";
 
 const expenses = ref([]);
 const total = ref(0);
@@ -115,6 +116,11 @@ const resetFilters = () => {
                 <h2 class="text-lg font-semibold">Number of Expenses</h2>
                 <p class="text-2xl font-bold text-blue-600">{{ count }}</p>
             </div>
+        </div>
+
+        <!-- --------------- Chartpanel  ------------->
+        <div>
+            <ChartPanel />
         </div>
 
         <!-- -- CSV Upload Component ------------->
