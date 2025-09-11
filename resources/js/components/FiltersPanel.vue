@@ -1,6 +1,14 @@
 <script setup>
 import {ref , defineEmits , computed} from 'vue';
 
+const props = defineProps({
+
+   target : {
+       type : String,
+       required : true , // table or chart
+   }
+});
+
 const emit = defineEmits(['apply-filters' , 'reset-filters']);
 const filters = ref({
             category: '',
@@ -10,7 +18,7 @@ const filters = ref({
             endDate: ''});
 
 // Method to reset filters
-const resetFilters = () => {
+const resetFilters = (target) => {
     filters.value = {
         category: '',
         minAmount: '',
@@ -18,6 +26,8 @@ const resetFilters = () => {
         startDate: '',
         endDate: '',
     };
+    emit('reset-filters', { target });
+
 };
 
 
@@ -28,11 +38,11 @@ const buttonClass = computed(() =>{
 });
 
 // Define the applyFilters method
-const applyFilters = async () => {
+const applyFilters = async (target) => {
     loading.value = true; // Show spinner
     try {
         await new Promise(resolve => setTimeout(resolve, 2000)); // Simulate delay
-         emit('apply-filters', filters.value);
+         emit('apply-filters', {target , filters : filters.value });
     } finally {
         loading.value = false; // Hide spinner
     }
@@ -77,17 +87,38 @@ const applyFilters = async () => {
             </div>
             <div class="mt-4 flex justify-end">
                 <button
-                    @click="applyFilters"
+                    v-if="target === 'table'"
+                    @click="applyFilters('table')"
                     :class="['px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600', buttonClass]"
                     :disabled="loading"
                 >
                     <span v-if="loading" class="mr-2">Loading...</span>
-                    <span v-else>Apply Filters</span>
+                    <span v-else>Apply to Table</span>
                 </button>
 
-                <!-- Reset Filters Button -->
-                <button @click="resetFilters" class="ml-2 bg-red-500 text-white px-4 py-2 rounded">
+                <!-- Apply to chart  -->
+                <button
+                    v-if="target === 'chart'"
+                    @click="applyFilters('chart')"
+                class="ml-2 px-4 py-2 bg-green-500 text-white rounded"
+                >
+                Apply to Chart <!-- **Add**: New button for Chart -->
+                </button>
+
+                <!-- Reset Table Button -->
+                <button
+                    v-if="target === 'table'"
+                    @click="resetFilters('table')"
+                    class="ml-2 bg-red-500 text-white px-4 py-2 rounded">
                     Reset Filters
+                </button>
+                <!-- Reset Chart -->
+                <button
+                    v-if="target === 'chart'"
+                    @click="resetFilters('chart')"
+                class="ml-2 bg-yellow-500 text-white px-4 py-2 rounded"
+                >
+                Reset Chart Filters <!-- **Add**: New button for Chart -->
                 </button>
             </div>
         </div>

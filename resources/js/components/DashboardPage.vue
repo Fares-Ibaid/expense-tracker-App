@@ -19,8 +19,11 @@ const totalPages  = ref(0);
 const appliedFilters = ref({});
 
 // fetch expenses data on component mount and apply filters if any
-const fetchExpenses = async (filters = {}) => {
+const fetchExpenses = async (filters = {} , target = 'table') => {
     try {
+
+        if(target === 'table') {
+
         const response = await axios.get('/api/dashboard', {
             params: {
                 page: currentPage.value,
@@ -36,6 +39,12 @@ const fetchExpenses = async (filters = {}) => {
         total.value = response.data.total;
         count.value = response.data.count;
         totalPages.value = response.data.expenses.last_page;
+        }else if(target === 'chart') {
+            const response = await axios.get('/api/expenses/summary-by-category', {
+                params: filters,
+            });
+
+        }
 
        // console.log('Fetched expenses:', expenses.value); // Debugging the assigned value
 
@@ -78,13 +87,14 @@ const toggleSettingsPanel = () => {
 
 // toggle filter panel
 const showFilters = ref(false);
+const showChartFilters = ref(true);
 const toggleFiltersPanel = () =>{
     showFilters.value = !showFilters.value ;
 }
 
 // Handle filters applied from FiltersPanel
-const handleAppFilters = (filters) => {
-   // console.log('Applied Filters:', filters); // Debugging the filters
+const handleAppFilters = ({target , filters}) => {
+   // console.log('target:', target); // Debugging the filters
 
     // Reset date fields if they are empty
     if (!filters.startDate) {
@@ -94,13 +104,17 @@ const handleAppFilters = (filters) => {
         filters.endDate = null;
     }
 
-    appliedFilters.value = filters; // Store the applied filters
-    fetchExpenses(filters); // Fetch data with the new filters
+    if (target === 'table') {
+        appliedFilters.value = filters; // Store the applied filters for the table
+        fetchExpenses(filters, 'table'); // Fetch data for the table
+    } else if (target === 'chart') {
+        fetchExpenses(filters, 'chart'); // Fetch data for the chart
+    }
 };
 
 const resetFilters = () => {
     appliedFilters.value = {}; // Clear all filters
-    fetchExpenses(); // Fetch data without filters
+    fetchExpenses({} , 'table'); // Fetch data without filters
 };
 </script>
 
@@ -121,6 +135,16 @@ const resetFilters = () => {
         <!-- --------------- Chartpanel  ------------->
         <div>
             <ChartPanel />
+
+            <div v-if="showChartFilters" class="pt-4">
+                <FiltersPanel
+                    target="chart"
+                    @apply-filters="handleAppFilters"
+                    @reset-filters="resetFilters"
+                />
+            </div>
+
+
         </div>
 
         <!-- -- CSV Upload Component ------------->
@@ -138,6 +162,7 @@ const resetFilters = () => {
         <!-- -- Filters Panel Component ------------->
         <div v-if="showFilters" class="pt-4">
             <FiltersPanel
+                target="table"
                 @apply-filters="handleAppFilters"
                 @reset-filters="resetFilters"
             />
