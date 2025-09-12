@@ -7,6 +7,11 @@ import FiltersPanel from "@/components/FiltersPanel.vue";
 import SettingsPanel from "@/components/SettingsPanel.vue";
 import ChartPanel from "@/components/ChartPanel.vue";
 
+const chartData = ref({
+    series: [],
+    labels: [],
+});
+
 const expenses = ref([]);
 const total = ref(0);
 const count = ref(0);
@@ -32,8 +37,6 @@ const fetchExpenses = async (filters = {} , target = 'table') => {
             },
         });
 
-       // console.log('API Response:', response.data); // Debugging the full response
-
         // Extract the data key for rows
         expenses.value = response.data.expenses.data; // Extract the array of expenses
         total.value = response.data.total;
@@ -43,6 +46,11 @@ const fetchExpenses = async (filters = {} , target = 'table') => {
             const response = await axios.get('/api/expenses/summary-by-category', {
                 params: filters,
             });
+
+            chartData.value = {
+                series: response.data.map(item => Math.abs(parseFloat(item.total))),
+                labels: response.data.map(item => item.category),
+            };
 
         }
 
@@ -55,7 +63,9 @@ const fetchExpenses = async (filters = {} , target = 'table') => {
 
 onMounted(async () => {
 
-    fetchExpenses();
+    fetchExpenses({} , 'chart'); // Fetch initial chart data without filters
+
+    fetchExpenses({}, 'table');
 });
 
 // Handle page change
@@ -134,7 +144,9 @@ const resetFilters = () => {
 
         <!-- --------------- Chartpanel  ------------->
         <div>
-            <ChartPanel />
+            <ChartPanel
+            :chart-data = "chartData"
+            />
 
             <div v-if="showChartFilters" class="pt-4">
                 <FiltersPanel

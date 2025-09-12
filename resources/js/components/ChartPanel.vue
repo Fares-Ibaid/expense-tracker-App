@@ -1,19 +1,69 @@
 <script setup>
-import VueApexCharts from "vue3-apexcharts";
-import { ref } from "vue";
+import { ref , watch } from "vue";
 
+const props = defineProps({
+    chartData: {
+        type: Object,
+        required: true,
+    },
+});
+
+
+// ApexCharts expects:
+// - `series` as a separate prop
+// - `labels` inside the `options` object
+const series = ref([]);
 const chartOptions = ref({
     chart: {
-        type: "pie", // Change chart type to pie
+        type: 'pie',
     },
-    series: [10, 20, 30, 40], // Data for the pie chart
-    labels: ["Category 1", "Category 2", "Category 3", "Category 4"], // Labels for the pie chart
+    labels: [],
+    legend: {
+        position: 'bottom',
+    },
+    title: {
+        text: 'Expenses by Category',
+        align: 'center',
+    },
 });
+
+
+
+// Watch for changes in chartData and update the chart
+watch(
+    () => props.chartData,
+    (newData) => {
+        if (newData && newData.series && newData.labels) {
+            series.value = newData.series;
+
+            // Reassign the entire chartOptions object to trigger reactivity properly
+            chartOptions.value = {
+                chart: {
+                    type: 'pie',
+                },
+                labels: newData.labels,
+                legend: {
+                    position: 'bottom',
+                },
+                title: {
+                    text: 'Expenses by Category',
+                    align: 'center',
+                },
+            };
+        }
+    },
+    { immediate: true }
+);
 </script>
 
 <template>
     <div>
-        <apexchart type="pie" height="350" :options="chartOptions.chart" :series="chartOptions.series" :labels="chartOptions.labels" />
+        <apexchart
+            type="pie"
+            height="350"
+            :options="chartOptions"
+            :series="series"
+        />
     </div>
 </template>
 

@@ -155,9 +155,11 @@ class ExpenseUploadController extends Controller
         // Apply filters using the trait
         $this->applyFilters($request, $query);
 
-        $data = $query->selectRaw('category, SUM(amount) as total')
-            ->groupBy('category')
-            ->get();
+       // Join the categories table if category is a foreign key
+       $data = $query->join('categories', 'expenses.category_id', '=', 'categories.id')
+           ->selectRaw('categories.name as category, SUM(expenses.amount) as total')
+           ->groupBy('categories.name')
+           ->get();
 
         return response()->json($data);
     }

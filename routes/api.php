@@ -12,4 +12,4 @@ Route::post('/expenses/upload', [ExpenseUploadController::class, 'upload'])->nam
 Route::post('/expenses/save', [ExpenseUploadController::class, 'save']);
 
 // ---------------- ---------------- Summary ----------------------------------
-Route::get('/expenses/summary-by-category', [ExpenseUploadController::class, 'index']);
+Route::get('/expenses/summary-by-category', [ExpenseUploadController::class, 'summaryByCategory']);
