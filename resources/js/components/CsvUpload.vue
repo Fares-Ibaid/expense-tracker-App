@@ -5,6 +5,7 @@ import axios from 'axios'
 const file = ref(null)
 const successMessage = ref(null)
 const error = ref(null)
+// toDo - read the categories from backend
 const categories = [
   'Lebensmittel',
     'Essen & Trinken',

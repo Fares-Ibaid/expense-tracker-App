@@ -88,13 +88,6 @@ const columns = [
     { key: 'date', label: 'Date' },
 ];
 
-// show settings panel
-const showSettings = ref(true)
-
-const toggleSettingsPanel = () => {
-    showSettings.value = !showSettings.value
-}
-
 // toggle filter panel
 const showFilters = ref(false);
 const showChartFilters = ref(true);
@@ -131,6 +124,9 @@ const resetFilters = () => {
 <template>
     <div>
         <h1 class="text-3xl font-bold mb-6">💸 Expense Tracker Dashboard</h1>
+
+        <SettingsPanel />
+
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div class="bg-white p-4 shadow rounded">
                 <h2 class="text-lg font-semibold">Total Expenses</h2>
@@ -142,7 +138,7 @@ const resetFilters = () => {
             </div>
         </div>
 
-        <!-- --------------- Chartpanel  ------------->
+        <!-- --------------- Chart panel  ------------->
         <div>
             <ChartPanel
             :chart-data = "chartData"
@@ -205,15 +201,6 @@ const resetFilters = () => {
             </button>
         </div>
 
-        <!-- Right-Side Settings Panel (slide-over style) -->
-        <div v-if="showSettings" class="w-80 bg-white shadow-lg p-4 border-l">
-            <div class="flex justify-between items-center mb-4">
-                <h2 class="text-xl font-semibold">Settings</h2>
-                <button @click="toggleSettingsPanel" class="text-gray-600 hover:text-gray-800">x</button>
-            </div>
-
-            <SettingsPanel />
-        </div>
     </div>
 </template>
 

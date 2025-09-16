@@ -13,6 +13,8 @@ class ExpenseUploadController extends Controller
 {
     use Filterable ;
     // hard-coded category rules
+
+    // toDo - refactor this to read from the DB & user Rules Panel
     private array $categoryRules = [
         'EDEKA' => 'Lebensmittel',
         'DM' => 'Essen & Trinken',
@@ -114,12 +116,15 @@ class ExpenseUploadController extends Controller
         ]);
 
         // Filter out duplicated expenses
+            // the flag themselves is set during the upload process ( Parser )
         $nonDuplicatedExpenses = array_filter($data['expenses'], function ($item) {
             return !$item['duplicated'];
         });
 
         // hard codede user_id
         $user_id = 1;
+
+        // toDo - give the user a way to decide what to do with duplicates rows
         // if the validation passes, you can save the expenses to the database
         foreach ($nonDuplicatedExpenses as $item) {
             Expense::create([
@@ -128,6 +133,7 @@ class ExpenseUploadController extends Controller
                 'description' => $item['description'],
                 'amount' => $item['amount'],
                 // Map category
+                // toDo- make the mapper to by dynamic
                 'category_id' => Category::where('name', $this->autoCategorize($item['description']))->value('id')
             ]);
         }
@@ -164,3 +170,4 @@ class ExpenseUploadController extends Controller
         return response()->json($data);
     }
 }
+
