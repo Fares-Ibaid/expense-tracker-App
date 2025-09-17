@@ -1,11 +1,13 @@
 <script setup>
 import { ref , onMounted } from 'vue'
+import ConfirmModal from "@/components/utilities/ConfirmModal.vue";
 import axios  from "axios";
-import {rule} from "postcss";
+
+const showConfirm = ref(false);
+const ruleToDelete = ref(null);
 
 
 // Flags
-
 const isEditing = ref(false) ;
 
 const rules = ref([]) ;
@@ -58,14 +60,23 @@ const addRule = async() => {
         console.log(error)
     }
 }
-const deleteRule =  async (rule) =>{
-    try{
-        console.log(rule , 'to be deleted');
-        const response = await axios.delete(`/api/rules/${rule.id}`)
-        rules.value = rules.value.filter(r => r.id !== rule.id)
 
-    }catch (error){
-        console.log('Delete Failed ',error);
+// function called when user confirms deletion in modal
+async function deleteRule() {
+    if (!ruleToDelete.value) return
+
+    try {
+        await axios.delete(`/api/rules/${ruleToDelete.value.id}`)
+
+        rules.value = rules.value.filter(r => r.id !== ruleToDelete.value.id)
+
+        showConfirm.value = false
+        ruleToDelete.value = null
+
+        // Optionally show success toast here
+    } catch (error) {
+        console.error(error)
+        // Optionally show error toast here
     }
 }
 
@@ -108,17 +119,31 @@ const cancelEdit = () => {
     resetForm()
 }
 
+// ------------------------------- helper functions ------------------------
+
 // Helper to get category name from ID
 const getCategoryName = (id) => {
     const cat = categories.value.find(c => c.id === id)
     return cat ? cat.name : 'Unknown'
 }
 
+function  askDeleteRule(rule) {
+    ruleToDelete.value = { ...rule }
+    showConfirm.value = true
+}
 
+// function called when user cancels deletion
+function cancelDelete() {
+    showConfirm.value = false
+    ruleToDelete.value = null
+}
 
 </script>
 
 <template>
+<!--    <p>Debug: {{ ruleToDelete }}</p>
+    <p>Debug: {{ ruleToDelete.value }}</p>
+    <p>Debug: {{ ruleToDelete.value?.value }}</p>-->
     <div class="space-y-8">
         <!-- Category Section -->
         <section>
@@ -222,10 +247,19 @@ const getCategoryName = (id) => {
                 <strong>{{ rule.category?.name ?? 'Unknown' }}</strong>
                 </span>
                     <button @click="startEdit(rule)" class="text-blue-500 text-sm">Edit</button>
-                    <button @click="deleteRule(rule)" class="text-red-500 text-sm">Delete</button>
+                    <button @click="askDeleteRule(rule)" class="text-red-500 text-sm">Delete</button>
                 </li>
                 <!-- Repeat... -->
             </ul>
+            <!-- Confirmation Modal -->
+            <ConfirmModal
+                v-if="showConfirm"
+                :message="ruleToDelete.value ? `Are you sure you want to delete rule  : ${ruleToDelete.value}?` : ''"
+
+
+                @confirm="deleteRule"
+                @cancel="cancelDelete"
+            />
         </section>
     </div>
 
