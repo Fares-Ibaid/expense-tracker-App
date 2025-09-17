@@ -1,5 +1,18 @@
 <script setup>
+import { ref , onMounted } from 'vue'
+import axios  from "axios";
 
+
+const rules = ref([])
+
+onMounted(async () =>{
+    try{
+        const response = await axios.get('/api/rules')
+        rules.value = response.data
+    }catch (error){
+        console.log(error)
+    }
+})
 </script>
 
 <template>
@@ -66,8 +79,15 @@
 
             <!-- Rules List -->
             <ul class="space-y-1">
-                <li class="flex justify-between items-center border-b py-1">
-                    <span>“Starbucks” (contains) → Coffee</span>
+                <li
+                    v-for="rule in rules"
+                    :key="rule.id"
+                    class="flex justify-between items-center border-b py-1"
+                >
+                <span>
+                “{{ rule.value }}” ({{ rule.match_type }}) in {{ rule.field }} →
+                <strong>{{ rule.category?.name ?? 'Unknown' }}</strong>
+                </span>
                     <button class="text-red-500 text-sm">Delete</button>
                 </li>
                 <!-- Repeat... -->
