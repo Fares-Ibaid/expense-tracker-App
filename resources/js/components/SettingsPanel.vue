@@ -1,18 +1,69 @@
 <script setup>
 import { ref , onMounted } from 'vue'
 import axios  from "axios";
+import {rule} from "postcss";
 
 
-const rules = ref([])
+const rules = ref([]) ;
+const categories = ref([]) ;
+
+const editingRule = ref(null) ;
+
+// form data for track the new rule
+const ruleForm = ref({
+    value: '',
+    field: '',
+    match_type: '',
+    category_id: '',
+})
+
 
 onMounted(async () =>{
+
     try{
+        // fetching categories
+        const catResponse = await axios.get('/api/categories')
+        categories.value = catResponse.data
+
+
+        // fetching rules
         const response = await axios.get('/api/rules')
         rules.value = response.data
     }catch (error){
         console.log(error)
     }
+
+
+
 })
+
+// add new rule through axios
+const addRule = async() => {
+    try {
+        const response = await axios.post('/api/rules', ruleForm.value)
+        // update the rules list directly without refetching
+        rules.value.push(response.data)
+
+        ruleForm.value = {
+            value: '',
+            field: '',
+            match_type: '',
+            category_id: '',
+        }
+    }catch (error){
+        console.log(error)
+    }
+}
+const deleteRule =  async (rule) =>{
+    try{
+        console.log(rule , 'to be deleted');
+        const response = await axios.delete(`/api/rules/${rule.id}`)
+        rules.value = rules.value.filter(r => r.id !== rule.id)
+
+    }catch (error){
+        console.log('Delete Failed ',error);
+    }
+}
 </script>
 
 <template>
@@ -45,13 +96,17 @@ onMounted(async () =>{
             <div class="flex gap-2 mb-3">
                 <!-- Keyword input -->
                 <input
+                    v-model="ruleForm.value"
                     type="text"
                     placeholder="Keyword (e.g. Starbucks)"
                     class="border rounded p-2 w-full"
                 />
 
                 <!-- Field selection -->
-                <select class="border rounded p-2 w-full">
+                <select
+                    v-model="ruleForm.field"
+                    class="border rounded p-2 w-full"
+                >
                     <option disabled selected>Select field</option>
                     <option value="description">Description</option>
                     <option value="merchant">Merchant</option>
@@ -59,7 +114,9 @@ onMounted(async () =>{
                 </select>
 
                 <!-- Match Type dropdown -->
-                <select class="border rounded p-2 w-full">
+                <select
+                    v-model="ruleForm.match_type"
+                    class="border rounded p-2 w-full">
                     <option disabled selected>Match Type</option>
                     <option value="contains">Contains</option>
                     <option value="equals">Equals</option>
@@ -67,14 +124,26 @@ onMounted(async () =>{
                 </select>
 
                 <!-- Category dropdown -->
-                <select class="border rounded p-2 w-full">
+                <select
+                    v-model="ruleForm.category_id"
+                    class="border rounded p-2 w-full"
+                >
                     <option disabled selected>Select category</option>
-                    <option>Groceries</option>
-                    <option>Transport</option>
+                    <option
+                    v-for="category in categories"
+                    :key="category.id"
+                    :value="category.id"
+                    >
+                     {{ category.name }}
+                    </option>
+
                 </select>
 
                 <!-- Add button -->
-                <button class="bg-green-600 text-white px-4 rounded">Add</button>
+                <button
+                    @click="addRule"
+                    class="bg-green-600 text-white px-4 rounded"
+                >Add</button>
             </div>
 
             <!-- Rules List -->
@@ -88,7 +157,8 @@ onMounted(async () =>{
                 “{{ rule.value }}” ({{ rule.match_type }}) in {{ rule.field }} →
                 <strong>{{ rule.category?.name ?? 'Unknown' }}</strong>
                 </span>
-                    <button class="text-red-500 text-sm">Delete</button>
+                    <button @click="editingRule" class="text-blue-500 text-sm">Edit</button>
+                    <button @click="deleteRule(rule)" class="text-red-500 text-sm">Delete</button>
                 </li>
                 <!-- Repeat... -->
             </ul>

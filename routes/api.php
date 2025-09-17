@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\RuleController;
 use Illuminate\Support\Facades\Route;
@@ -19,7 +20,12 @@ Route::get('/expenses/summary-by-category', [ExpenseUploadController::class, 'su
 // ---------------------------------- Rules  ----------------------------------
 Route::get('/rules',[RuleController::class,'index']);
 Route::post('/rules',[RuleController::class,'store']);
+Route::delete('/rules/{id}',[RuleController::class,'destroy']);
+Route::put('/rules/{id}',[RuleController::class,'update']);
 
+
+// ----------------------------------- Categories ----------------------------------
+Route::get('/categories', [CategoryController::class, 'index']);
 
 /*Route::get('/ping', function () {
     return response()->json(['message' => 'API is working!']);
