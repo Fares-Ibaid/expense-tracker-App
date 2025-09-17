@@ -4,13 +4,17 @@ import axios  from "axios";
 import {rule} from "postcss";
 
 
+// Flags
+
+const isEditing = ref(false) ;
+
 const rules = ref([]) ;
 const categories = ref([]) ;
 
 const editingRule = ref(null) ;
 
 // form data for track the new rule
-const ruleForm = ref({
+const activeRule = ref({
     value: '',
     field: '',
     match_type: '',
@@ -40,11 +44,11 @@ onMounted(async () =>{
 // add new rule through axios
 const addRule = async() => {
     try {
-        const response = await axios.post('/api/rules', ruleForm.value)
+        const response = await axios.post('/api/rules', activeRule.value)
         // update the rules list directly without refetching
         rules.value.push(response.data)
 
-        ruleForm.value = {
+        activeRule.value = {
             value: '',
             field: '',
             match_type: '',
@@ -64,6 +68,54 @@ const deleteRule =  async (rule) =>{
         console.log('Delete Failed ',error);
     }
 }
+
+// ------------------------------------------  update section  --------------------------
+
+// prepare the rule for editing
+const startEdit = (rule) => {
+    activeRule.value = { ...rule } // clone to avoid live binding
+    isEditing.value = true
+}
+
+const updateRule = async () => {
+    try {
+        const { id, ...data } = activeRule.value
+        const response = await axios.put(`/api/rules/${id}`, data)
+
+        // Replace in the list
+        const index = rules.value.findIndex(r => r.id === id)
+        if (index !== -1) rules.value[index] = response.data
+
+        resetForm()
+    } catch (error) {
+        console.error('Failed to update rule:', error)
+    }
+}
+
+// Reset form to default (used after add/edit/cancel)
+const resetForm = () => {
+    activeRule.value = {
+        value: '',
+        field: '',
+        match_type: '',
+        category_id: ''
+    }
+    isEditing.value = false
+}
+
+//  Cancel editing and reset form
+const cancelEdit = () => {
+    resetForm()
+}
+
+// Helper to get category name from ID
+const getCategoryName = (id) => {
+    const cat = categories.value.find(c => c.id === id)
+    return cat ? cat.name : 'Unknown'
+}
+
+
+
 </script>
 
 <template>
@@ -96,7 +148,7 @@ const deleteRule =  async (rule) =>{
             <div class="flex gap-2 mb-3">
                 <!-- Keyword input -->
                 <input
-                    v-model="ruleForm.value"
+                    v-model="activeRule.value"
                     type="text"
                     placeholder="Keyword (e.g. Starbucks)"
                     class="border rounded p-2 w-full"
@@ -104,7 +156,7 @@ const deleteRule =  async (rule) =>{
 
                 <!-- Field selection -->
                 <select
-                    v-model="ruleForm.field"
+                    v-model="activeRule.field"
                     class="border rounded p-2 w-full"
                 >
                     <option disabled selected>Select field</option>
@@ -115,7 +167,7 @@ const deleteRule =  async (rule) =>{
 
                 <!-- Match Type dropdown -->
                 <select
-                    v-model="ruleForm.match_type"
+                    v-model="activeRule.match_type"
                     class="border rounded p-2 w-full">
                     <option disabled selected>Match Type</option>
                     <option value="contains">Contains</option>
@@ -125,7 +177,7 @@ const deleteRule =  async (rule) =>{
 
                 <!-- Category dropdown -->
                 <select
-                    v-model="ruleForm.category_id"
+                    v-model="activeRule.category_id"
                     class="border rounded p-2 w-full"
                 >
                     <option disabled selected>Select category</option>
@@ -139,14 +191,26 @@ const deleteRule =  async (rule) =>{
 
                 </select>
 
-                <!-- Add button -->
+                <!-- ✅ Add or Save Button -->
                 <button
-                    @click="addRule"
-                    class="bg-green-600 text-white px-4 rounded"
-                >Add</button>
+                    @click="isEditing ? updateRule() : addRule()"
+                    class="px-4 rounded text-white"
+                    :class="isEditing ? 'bg-green-600' : 'bg-blue-600'"
+                >
+                    {{ isEditing ? 'Save' : 'Add' }}
+                </button>
+
+                <!-- ✅ Cancel Button (only in edit mode) -->
+                <button
+                    v-if="isEditing"
+                    @click="cancelEdit"
+                    class="text-gray-600 px-2"
+                >
+                    Cancel
+                </button>
             </div>
 
-            <!-- Rules List -->
+            <!----------------------------  Rules List ----------------->
             <ul class="space-y-1">
                 <li
                     v-for="rule in rules"
@@ -157,7 +221,7 @@ const deleteRule =  async (rule) =>{
                 “{{ rule.value }}” ({{ rule.match_type }}) in {{ rule.field }} →
                 <strong>{{ rule.category?.name ?? 'Unknown' }}</strong>
                 </span>
-                    <button @click="editingRule" class="text-blue-500 text-sm">Edit</button>
+                    <button @click="startEdit(rule)" class="text-blue-500 text-sm">Edit</button>
                     <button @click="deleteRule(rule)" class="text-red-500 text-sm">Delete</button>
                 </li>
                 <!-- Repeat... -->

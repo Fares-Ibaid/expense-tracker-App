@@ -29,6 +29,7 @@ class RuleController extends Controller
         ]);
 
         $rule  = Rule::create($validated);
+        $rule->load('category');
 
         return response()->json($rule,201);
     }
@@ -56,6 +57,7 @@ class RuleController extends Controller
         $rule = Rule::findorFail($id);
 
         $rule->update($validated);
+        $rule->load('category');
 
         return response()->json($rule,200);
     }
