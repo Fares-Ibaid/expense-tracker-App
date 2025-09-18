@@ -1,11 +1,16 @@
 <script setup>
-import { ref , onMounted } from 'vue'
+import { ref , onMounted , nextTick  } from 'vue'
 import ConfirmModal from "@/components/utilities/ConfirmModal.vue";
+import ToastNotification from "@/components/utilities/ToastNotification.vue";
 import axios  from "axios";
 
 const showConfirm = ref(false);
 const ruleToDelete = ref(null);
 
+// Toast notification
+const toastMessage = ref('')
+const toastType = ref('success')
+const showToast = ref(false)
 
 // Flags
 const isEditing = ref(false) ;
@@ -49,6 +54,7 @@ const addRule = async() => {
         const response = await axios.post('/api/rules', activeRule.value)
         // update the rules list directly without refetching
         rules.value.push(response.data)
+        triggerToast('Rule added successfully.','success')
 
         activeRule.value = {
             value: '',
@@ -69,6 +75,8 @@ async function deleteRule() {
         await axios.delete(`/api/rules/${ruleToDelete.value.id}`)
 
         rules.value = rules.value.filter(r => r.id !== ruleToDelete.value.id)
+        triggerToast('Rule deleted successfully.', 'success')
+
 
         showConfirm.value = false
         ruleToDelete.value = null
@@ -76,6 +84,9 @@ async function deleteRule() {
         // Optionally show success toast here
     } catch (error) {
         console.error(error)
+
+        showConfirm.value = false ;
+        triggerToast('Failed to delete rule.', 'error')
         // Optionally show error toast here
     }
 }
@@ -96,8 +107,8 @@ const updateRule = async () => {
         // Replace in the list
         const index = rules.value.findIndex(r => r.id === id)
         if (index !== -1) rules.value[index] = response.data
-
         resetForm()
+        triggerToast('Rule updated successfully.', 'success')
     } catch (error) {
         console.error('Failed to update rule:', error)
     }
@@ -138,12 +149,16 @@ function cancelDelete() {
     ruleToDelete.value = null
 }
 
+function triggerToast(msg, type = 'success') {
+    toastMessage.value = msg
+    toastType.value = type
+    showToast.value = false // reset to allow re-trigger
+    nextTick(() => showToast.value = true)
+}
+
 </script>
 
 <template>
-<!--    <p>Debug: {{ ruleToDelete }}</p>
-    <p>Debug: {{ ruleToDelete.value }}</p>
-    <p>Debug: {{ ruleToDelete.value?.value }}</p>-->
     <div class="space-y-8">
         <!-- Category Section -->
         <section>
@@ -259,6 +274,13 @@ function cancelDelete() {
 
                 @confirm="deleteRule"
                 @cancel="cancelDelete"
+            />
+
+            <!--  Toast Notification  -->
+            <ToastNotification
+                v-if="showToast"
+                :message="toastMessage"
+                :type="toastType"
             />
         </section>
     </div>
