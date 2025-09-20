@@ -26,6 +26,9 @@ Route::put('/rules/{id}',[RuleController::class,'update']);
 
 // ----------------------------------- Categories ----------------------------------
 Route::get('/categories', [CategoryController::class, 'index']);
+Route::post('/categories', [CategoryController::class, 'store']);
+Route::put('/categories/{id}', [CategoryController::class, 'update']);
+Route::delete('/categories/{id}', [CategoryController::class, 'destroy']);
 
 /*Route::get('/ping', function () {
     return response()->json(['message' => 'API is working!']);
