@@ -85,8 +85,11 @@ const confirmDelete = async () => {
         triggerToast('Category deleted successfully.', 'success');
         await loadCategories();
     } catch (error) {
-        triggerToast('Error deleting category.', 'error');
-        console.error('Error deleting category:', error);
+        if (error.response && error.response.status === 400) {
+            triggerToast(error.response.data.error, 'warning');
+        } else {
+            triggerToast('Error deleting category.', 'error');
+        }
     } finally {
         categoryToDelete.value = null;
     }
@@ -158,7 +161,12 @@ const triggerToast =  async (message, type = 'success') => {
 
                 <!-- Normal Mode -->
                 <template v-else>
-                    <span>{{ category.name }}</span>
+             <span>
+               {{ category.name }}
+               <span class="px-2 py-1 rounded text-white" :class="`bg-${category.rules.length > 0 ? 'green' : 'gray'}-500`">
+                 {{ category.rules.length }}
+               </span>
+             </span>
                     <div class="flex gap-2">
                         <button
                             class="text-blue-600 text-sm hover:underline"

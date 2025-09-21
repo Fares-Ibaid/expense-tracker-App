@@ -11,4 +11,9 @@ class Category extends Model
     {
         return $this->hasMany(Expense::class);
     }
+
+    public function rules()
+    {
+        return $this->hasMany(Rule::class);
+    }
 }

@@ -9,7 +9,7 @@ class CategoryController extends Controller
 {
     public function index() {
 
-        return response()->json(Category::orderBy('created_at', 'desc')->get());
+        return response()->json(Category::with('rules')->orderBy('created_at', 'desc')->get());
     }
 
     public function store(Request $request)
@@ -43,6 +43,9 @@ class CategoryController extends Controller
     public function destroy($id)
     {
         $category = Category::findOrFail($id);
+        if( $category->rules()->count() > 0 ) {
+            return response()->json(['error' => 'Cannot delete category with associated rules'], 400);
+        }
         $category->delete();
 
         return response()->json(['message' => 'Category deleted']);
