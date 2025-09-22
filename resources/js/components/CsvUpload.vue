@@ -5,15 +5,7 @@ import axios from 'axios'
 const file = ref(null)
 const successMessage = ref(null)
 const error = ref(null)
-// toDo - read the categories from backend
-const categories = [
-  'Lebensmittel',
-    'Essen & Trinken',
-   'Strom',
-    'Transport',
-    'Abonnements'
-]
-
+const categories = ref([])  // will be fetched from backend
 const rows = ref([])
 
 const onFileChange = (event) => {
@@ -31,19 +23,31 @@ const handleUpload = async () => {
 
     try {
         const response = await axios.post('api/expenses/upload', formData) ;
-        // Mark each row with isValid flag
-        rows.value = (response.data.data || []).map(row => {
-            const isValid = validateRow(row);
+        const parseRows = response.data.data || [];
+
+        // Fetch categories/rules after upload
+        await fetchCategoriesAndRules();
+
+       // Map rows and ensure auto-categorized categories are selected
+        rows.value = parseRows.map(row => {
+            const isValid = validateRow(row); // validate each row
+
+            // Match the category from the fetched categories
+            const matchedCategory = categories.value.find(
+                (cat) => cat.name === row.category
+            );
+
             return {
                 ...row,
                 isValid,
-                category: row.category || null
+                category: matchedCategory || null
             };
         });
 
         successMessage.value = response.data.message || 'Upload successful!'
         file.value = null
         error.value = null
+
     } catch (err) {
         console.error('Upload failed:', err)
         error.value = err.response?.data?.message || 'Something went wrong.'
@@ -82,6 +86,18 @@ const validateRow = (row) => {
     const isAmountValid = row.amount !== undefined && !isNaN(row.amount); // Ensure amount is a valid number
     return isDateValid && isDescriptionValid && isAmountValid; // Combine all checks
 };
+
+// Fetch categories/rules
+const fetchCategoriesAndRules = async () => {
+    try {
+        const response = await axios.get('api/categories');
+        categories.value = response.data; // Update the categories state
+    } catch (err) {
+        console.error('Failed to fetch categories:', err);
+    }
+};
+
+
 </script>
 
 <template>
@@ -154,7 +170,7 @@ const validateRow = (row) => {
                         >
                             <option disabled value="">Select a category</option>
                             <option v-for="cat in categories" :key="cat" :value="cat">
-                                {{ cat }}
+                                {{ cat.name }}
                             </option>
                         </select>
                     </td>

@@ -13,7 +13,6 @@ use League\Csv\Statement;
 class ExpenseUploadController extends Controller
 {
     use Filterable ;
-    // hard-coded category rules
 
     public function upload(Request $request): \Illuminate\Http\JsonResponse
     {
@@ -151,8 +150,26 @@ class ExpenseUploadController extends Controller
         $rules = Rule::with('category')->get();
 
         foreach ($rules as $rule) {
-            if (str_contains($desc, strtolower($rule->name))) {
-                return $rule->category->name; // Return the associated category name
+            $ruleValue = strtolower($rule->value);
+
+            switch ($rule->match_type) {
+                case 'equals':
+                    if ($desc === $ruleValue) {
+                        return $rule->category->name;
+                    }
+                    break;
+
+                case 'contains':
+                    if (str_contains($desc, $ruleValue)) {
+                        return $rule->category->name;
+                    }
+                    break;
+
+                case 'regex':
+                    if (preg_match("/{$ruleValue}/i", $desc)) {
+                        return $rule->category->name;
+                    }
+                    break;
             }
         }
 
@@ -208,6 +225,9 @@ class ExpenseUploadController extends Controller
                     Rule::create([
                         'name' => $rule,
                         'category_id' => $createdCategory->id,
+                        'value' => $rule,
+                        'field' => 'description',
+                        'match_type' => 'equals',
                         'user_id' => $userId,
                     ]);
                 }
