@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 use App\Models\Expense;
 use App\Models\Category;
+use App\Models\Rule;
 use App\Traits\Filterable;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -14,21 +15,22 @@ class ExpenseUploadController extends Controller
     use Filterable ;
     // hard-coded category rules
 
-    // toDo - refactor this to read from the DB & user Rules Panel
-    private array $categoryRules = [
-        'EDEKA' => 'Lebensmittel',
-        'DM' => 'Essen & Trinken',
-        'Stadtwerke' => 'Strom',
-        'Benzin' => 'Transport',
-        'RSG Group GmbH' => 'Abonnements',
-    ];
-
     public function upload(Request $request): \Illuminate\Http\JsonResponse
     {
         $request->validate([
             'csv' => ['required', 'file', 'mimes:csv,txt'],
         ]);
 
+
+        $userId = 1; // Replace with your user ID
+
+        // Check if the user has any categories or rules
+        $hasCategories = Category::where('user_id', $userId)->exists();
+        $hasRules = Rule::where('user_id', $userId)->exists();
+
+        if (!$hasCategories && !$hasRules) {
+            $this->seedDefaultCategoriesAndRules($userId);
+        }
 
         // retrieve date ,amount , user_id
         $existingExpenses = Expense::select('date', 'amount', 'description')->get();
@@ -145,9 +147,12 @@ class ExpenseUploadController extends Controller
     {
         $desc = strtolower($description);
 
-        foreach ($this->categoryRules as $keyword => $category) {
-            if (str_contains($desc, strtolower($keyword))) {
-                return $category;
+        // Fetch rules from the database
+        $rules = Rule::with('category')->get();
+
+        foreach ($rules as $rule) {
+            if (str_contains($desc, strtolower($rule->name))) {
+                return $rule->category->name; // Return the associated category name
             }
         }
 
@@ -168,6 +173,46 @@ class ExpenseUploadController extends Controller
            ->get();
 
         return response()->json($data);
+    }
+
+    private function seedDefaultCategoriesAndRules($userId) : void
+    {
+
+        $categoryRules = [
+            'EDEKA' => 'Lebensmittel',
+            'DM' => 'Essen & Trinken',
+            'Stadtwerke' => 'Strom',
+            'Benzin' => 'Transport',
+            'RSG Group GmbH - Mcfit' => 'Abonnements',
+        ];
+
+        $categories = [];
+
+        // Extract unique categories from the array
+        foreach ($categoryRules as $rule => $category) {
+            if (!in_array($category, $categories)) {
+                $categories[] = $category;
+            }
+        }
+
+        // Create categories and rules
+        foreach ($categories as $categoryName) {
+            $createdCategory = Category::create([
+                'name' => $categoryName,
+                'user_id' => $userId,
+            ]);
+
+            // Create rules for the category
+            foreach ($categoryRules as $rule => $category) {
+                if ($category === $categoryName) {
+                    Rule::create([
+                        'name' => $rule,
+                        'category_id' => $createdCategory->id,
+                        'user_id' => $userId,
+                    ]);
+                }
+            }
+        }
     }
 }
 

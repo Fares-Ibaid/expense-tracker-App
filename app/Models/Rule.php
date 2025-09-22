@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Rule extends Model
 {
 
-    protected $fillable = ['field','match_type','value','category_id'];
+    protected $fillable = ['field','match_type','value','category_id','user_id'];
 
     public function category () : BelongsTo
     {
