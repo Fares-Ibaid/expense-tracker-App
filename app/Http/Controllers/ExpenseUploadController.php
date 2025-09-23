@@ -7,54 +7,32 @@ use App\Models\Rule;
 use App\Traits\Filterable;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use League\Csv\Exception;
+use League\Csv\InvalidArgument;
 use League\Csv\Reader;
 use League\Csv\Statement;
+use League\Csv\SyntaxError;
 
 class ExpenseUploadController extends Controller
 {
     use Filterable ;
 
+    /**
+     * @throws InvalidArgument
+     * @throws SyntaxError
+     * @throws Exception
+     */
     public function upload(Request $request): \Illuminate\Http\JsonResponse
     {
         $request->validate([
             'csv' => ['required', 'file', 'mimes:csv,txt'],
         ]);
 
-
         $userId = 1; // Replace with your user ID
-
-        // Check if the user has any categories or rules
-        $hasCategories = Category::where('user_id', $userId)->exists();
-        $hasRules = Rule::where('user_id', $userId)->exists();
-
-        if (!$hasCategories && !$hasRules) {
-            $this->seedDefaultCategoriesAndRules($userId);
-        }
-
-        // retrieve date ,amount , user_id
-        $existingExpenses = Expense::select('date', 'amount', 'description')->get();
-
-        // reformat to map array for quick searching
-        $existingExpensesMap = $existingExpenses->map(function ($expense) {
-            return [
-                'date' => $expense->date,
-                'amount' => $expense->amount,
-                'description' => $expense->description,
-            ];
-        })->toArray();
-
-        $path = $request->file('csv')->getRealPath();
-        $raw = file_get_contents($path);
-        $utf8 = mb_convert_encoding($raw, 'UTF-8', 'ISO-8859-1');
-
-        $csv = Reader::createFromString($utf8);
-        $csv->setDelimiter(';');
-        $csv->setHeaderOffset(0);
-
-        $statement = new Statement();
-        $records = $statement->process($csv);
-
         $parsed = [];
+        $this->checkIfTheUserHasAnyCategoriesOrRules($userId);
+        $existingExpensesMap = $this->retrievealreadySavedExpenses();
+        $records = $this->processCsv($request);
 
         foreach ($records as $row) {
             if (
@@ -64,7 +42,6 @@ class ExpenseUploadController extends Controller
             ) {
                 continue;
             }
-
             try {
                 // toDo - handle year 20xx vs 19xx Bug here
                 $buchungstag = trim($row['Buchungstag']);
@@ -233,6 +210,62 @@ class ExpenseUploadController extends Controller
                 }
             }
         }
+    }
+
+    /**
+     * @param int $userId
+     * @return void
+     */
+    public function checkIfTheUserHasAnyCategoriesOrRules(int $userId): void
+    {
+// Check if the user has any categories or rules
+        $hasCategories = Category::where('user_id', $userId)->exists();
+        $hasRules = Rule::where('user_id', $userId)->exists();
+
+        if (!$hasCategories && !$hasRules) {
+            $this->seedDefaultCategoriesAndRules($userId);
+        }
+    }
+
+    /**
+     * @return array
+     */
+    public function retrievealreadySavedExpenses() : array
+    {
+// retrieve date ,amount , user_id
+        $existingExpenses = Expense::select('date', 'amount', 'description')->get();
+
+        // reformat to map array for quick searching
+        $existingExpensesMap = $existingExpenses->map(function ($expense) {
+            return [
+                'date' => $expense->date,
+                'amount' => $expense->amount,
+                'description' => $expense->description,
+            ];
+        })->toArray();
+        return $existingExpensesMap;
+    }
+
+    /**
+     * @param Request $request
+     * @return \League\Csv\TabularDataReader
+     * @throws \League\Csv\Exception
+     * @throws \League\Csv\InvalidArgument
+     * @throws \League\Csv\SyntaxError
+     */
+    public function processCsv(Request $request): \League\Csv\TabularDataReader
+    {
+        $path = $request->file('csv')->getRealPath();
+        $raw = file_get_contents($path);
+        $utf8 = mb_convert_encoding($raw, 'UTF-8', 'ISO-8859-1');
+
+        $csv = Reader::createFromString($utf8);
+        $csv->setDelimiter(';');
+        $csv->setHeaderOffset(0);
+
+        $statement = new Statement();
+        $records = $statement->process($csv); // returning a TabularDataReader containing the parsed rows.
+        return $records;
     }
 }
 
