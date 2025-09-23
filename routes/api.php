@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\CsvPreviewController;
 use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\RuleController;
 use Illuminate\Support\Facades\Route;
@@ -10,6 +11,7 @@ use App\Http\Controllers\ExpenseUploadController;
 
 Route::get('/dashboard', [DashboardController::class, 'index']);
 // ---------------------------------- Expense Upload ----------------------------------
+Route::post('/csv/preview',[CsvPreviewController::class, 'preview']);
 Route::post('/expenses/upload', [ExpenseUploadController::class, 'upload'])->name('expenses.upload');
 Route::post('/expenses/save', [ExpenseUploadController::class, 'save']);
 

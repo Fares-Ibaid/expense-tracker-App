@@ -6,6 +6,7 @@ import CsvUpload     from "@/components/CsvUpload.vue";
 import FiltersPanel from "@/components/FiltersPanel.vue";
 import SettingsPanel from "@/components/SettingsPanel.vue";
 import ChartPanel from "@/components/ChartPanel.vue";
+import CsvUploadPreview from "@/components/settings/CsvUploadPreview.vue";
 
 const chartData = ref({
     series: [],
@@ -156,7 +157,11 @@ const resetFilters = () => {
         </div>
 
         <!-- -- CSV Upload Component ------------->
-        <CsvUpload />
+<!--        <CsvUpload />-->
+
+
+        <!-- csv preview component  -->
+        <csv-upload-preview/>
 
         <!--  toggle filters panel -->
      <button
