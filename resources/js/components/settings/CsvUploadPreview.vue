@@ -51,29 +51,31 @@ function submitMappings() {
 
         <div v-if="previewData">
             <h3>Preview & Column Mapping</h3>
-            <table border="1">
-                <thead>
-                <tr>
-                    <th v-for="(header, index) in previewData.headers" :key="index">
-                        <select v-model="columnMappings[index]">
-                            <option disabled value="">-- Select Mapping --</option>
-                            <option value="Date">Date</option>
-                            <option value="Description">Description</option>
-                            <option value="Amount">Amount</option>
-                            <option value="Ignore">Ignore</option>
-                        </select>
-                        <div>{{ header }}</div>
-                    </th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr v-for="(row, rowIndex) in previewData.preview" :key="rowIndex">
-                    <td v-for="(cell, cellIndex) in row" :key="cellIndex">{{ cell }}</td>
-                </tr>
-                </tbody>
-            </table>
+            <div class="table-container">
+                <table border="1">
+                    <thead>
+                    <tr>
+                        <th v-for="(header, index) in previewData.headers" :key="index">
+                            <select v-model="columnMappings[index]">
+                                <option disabled value="">-- Select Mapping --</option>
+                                <option value="Date">Date</option>
+                                <option value="Description">Description</option>
+                                <option value="Amount">Amount</option>
+                                <option value="Ignore">Ignore</option>
+                            </select>
+                            <div>{{ header }}</div>
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr v-for="(row, rowIndex) in previewData.preview" :key="rowIndex">
+                        <td v-for="(cell, cellIndex) in row" :key="cellIndex">{{ cell }}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
 
-            <button @click="submitMappings">Submit Mappings</button>
+            <button @click="submitMappings" class="submit-mappings-button">Submit Mappings</button>
         </div>
     </div>
 </template>
@@ -83,18 +85,67 @@ function submitMappings() {
     border: 3px solid #ccc;
     padding: 10px;
     margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.table-container {
+    overflow-x: auto;
+    max-width: 100%;
 }
 
 .csv-upload-container table {
     border-collapse: collapse;
     width: 100%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add shadow for depth */
+    border-radius: 8px; /* Rounded corners */
+    overflow: hidden; /* Ensure rounded corners apply */
 }
 
-.csv-upload-container table,
 .csv-upload-container th,
 .csv-upload-container td {
-    border: 1px solid #333;
-    padding: 8px;
+    padding: 12px; /* Add more padding for better spacing */
     text-align: left;
 }
+
+.csv-upload-container th {
+    background-color: #4CAF50; /* Green header background */
+    color: #f0f0f0; /* Light gray text for contrast */
+    font-weight: bold;
+    text-align: center; /* Center align header content */
+    vertical-align: middle; /* Center vertically */
+}
+
+.csv-upload-container tbody td {
+    text-align: center; /* Center align row content */
+    vertical-align: middle; /* Center vertically */
+}
+
+.csv-upload-container tbody tr:nth-child(even) {
+    background-color: #f9f9f9; /* Light gray for alternate rows */
+}
+
+.csv-upload-container tbody tr:hover {
+    background-color: #f1f1f1; /* Highlight row on hover */
+}
+
+.submit-mappings-button {
+    font-size: 1.5rem;
+    background-color: deepskyblue;
+    color: white;
+    float: right;
+    margin-top: 20px;
+    border: 2px solid #000; /* Added border */
+    padding: 10px 20px; /* Added padding */
+}
+
+.csv-upload-container h3 {
+    margin-top: 20px;
+}
+
+option {
+  color: black; /* Set the text color of options to black */
+}
+
+
 </style>
