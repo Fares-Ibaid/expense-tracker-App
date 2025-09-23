@@ -1,10 +1,23 @@
 <script setup>
-import { ref } from 'vue'
+import {computed, ref} from 'vue'
 import axios from 'axios'
 
 const previewData = ref(null) // { file_id, headers[], preview[][] }
 const loading = ref(false)
 const columnMappings = ref({}) // e.g., { 0: 'Date', 1: 'Description' }
+
+
+// computed prop
+
+const isValidMapping = computed(() => {
+  const selectedMappings = Object.values(columnMappings.value);
+  const importantMappings = selectedMappings.filter(val =>
+      ['Date', 'Description', 'Amount'].includes(val)
+  );
+  const uniqueMappings = [...new Set(importantMappings)];
+
+  return importantMappings.length === 3 && uniqueMappings.length === 3;
+});
 
 async function onFileChange(event) {
     const file = event.target.files[0]
@@ -32,11 +45,35 @@ async function onFileChange(event) {
 }
 
 function submitMappings() {
-    // Example: just log to console for now
-    console.log('Submitting mappings:', {
-        file_id: previewData.value.file_id,
-        mappings: columnMappings.value,
-    })
+
+  const selectedMappings = Object.values(columnMappings.value);
+
+  // Extract only Date, Description, Amount (ignore "Ignore" and empty)
+  const importantMappings = selectedMappings.filter(val =>
+      ['Date', 'Description', 'Amount'].includes(val)
+  );
+
+  const uniqueMappings = [...new Set(importantMappings)];
+
+  // Validate count
+  if (importantMappings.length !== 3) {
+    alert('Please map exactly one column each to Date, Description, and Amount.');
+    return;
+  }
+
+  // Validate no duplicates
+  if (uniqueMappings.length !== 3) {
+    alert('Each of Date, Description, and Amount must be mapped to a different column.');
+    return;
+  }
+
+  // Passed validation
+  console.log('Submitting mappings:', {
+    file_id: previewData.value.file_id,
+    mappings: columnMappings.value,
+  });
+
+  // TODO: POST to backend
 
     // TODO: POST to backend processing endpoint
 }
@@ -75,7 +112,7 @@ function submitMappings() {
                 </table>
             </div>
 
-            <button @click="submitMappings" class="submit-mappings-button">Submit Mappings</button>
+          <button v-if="isValidMapping" @click="submitMappings" class="submit-mappings-button">Submit Mappings</button>
         </div>
     </div>
 </template>
@@ -147,5 +184,8 @@ option {
   color: black; /* Set the text color of options to black */
 }
 
+select {
+  color: black; /* Ensure the selected option text is black */
+}
 
 </style>
