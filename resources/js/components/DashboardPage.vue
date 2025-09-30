@@ -6,11 +6,22 @@ import CsvUpload     from "@/components/CsvUpload.vue";
 import FiltersPanel from "@/components/FiltersPanel.vue";
 import SettingsPanel from "@/components/SettingsPanel.vue";
 import ChartPanel from "@/components/ChartPanel.vue";
+import LoadingOverlay from '@/components/utilities/LoadingOverlay.vue';
+
 
 const chartData = ref({
     series: [],
     labels: [],
 });
+
+const isLoading = ref(false);
+// toDo - adjust the code to be based on the ajax reauest
+
+/*const startLoading = () => {
+    isLoading.value = true;
+    setTimeout(() => {
+        isLoading.value = false; // Simulate loading completion
+    }, 3000)*/
 
 const expenses = ref([]);
 const total = ref(0);
@@ -123,6 +134,7 @@ const resetFilters = () => {
 
 <template>
     <div>
+        <LoadingOverlay :isLoading="isLoading" />
         <h1 class="text-3xl font-bold mb-6">💸 Expense Tracker Dashboard</h1>
 
         <SettingsPanel />

@@ -204,7 +204,7 @@ class ExpenseUploadController extends Controller
                         'category_id' => $createdCategory->id,
                         'value' => $rule,
                         'field' => 'description',
-                        'match_type' => 'equals',
+                        'match_type' => 'contains',
                         'user_id' => $userId,
                     ]);
                 }
