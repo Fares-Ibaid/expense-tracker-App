@@ -1,10 +1,14 @@
 <script setup>
 import {computed, ref} from 'vue'
 import axios from 'axios'
+import CsvUpload     from "@/components/CsvUpload.vue";
 
 const previewData = ref(null) // { file_id, headers[], preview[][] }
 const loading = ref(false)
 const columnMappings = ref({}) // e.g., { 0: 'Date', 1: 'Description' }
+
+const showCsvUploadComponent = ref(false); // State to control component rendering
+
 
 
 // computed prop
@@ -44,7 +48,7 @@ async function onFileChange(event) {
     }
 }
 
-function submitMappings() {
+async function submitMappings() {
 
   const selectedMappings = Object.values(columnMappings.value);
 
@@ -68,19 +72,24 @@ function submitMappings() {
   }
 
   // Passed validation
-  console.log('Submitting mappings:', {
-    file_id: previewData.value.file_id,
-    mappings: columnMappings.value,
-  });
+  try {
+    await axios.post('/api/csv/save-mapper', {
+      mappings: columnMappings.value,
+    file_id: previewData.value.file_id, // Pass the file_id from the preview data
 
-  // TODO: POST to backend
+    });
+    alert('Mapping saved as default!');
+    showCsvUploadComponent.value = true; // Show the CSV upload component on success
 
-    // TODO: POST to backend processing endpoint
+    console.log('the value of the mapper :', showCsvUploadComponent.value);
+  } catch (err) {
+    alert('Failed to save mapping: ' + (err.response?.data?.message || err.message));
+  }
 }
 </script>
 
 <template>
-    <div class="csv-upload-container">
+    <div class="csv-upload-container" v-if="!showCsvUploadComponent">
         <h2>Upload CSV</h2>
         <input type="file" @change="onFileChange" accept=".csv" />
 
@@ -115,6 +124,9 @@ function submitMappings() {
           <button v-if="isValidMapping" @click="submitMappings" class="submit-mappings-button">Submit Mappings</button>
         </div>
     </div>
+  <div v-if="showCsvUploadComponent">
+   <csv-upload/>
+  </div>
 </template>
 
 <style scoped>

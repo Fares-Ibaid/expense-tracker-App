@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\CsvMapperController;
 use App\Http\Controllers\CsvPreviewController;
 use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\RuleController;
@@ -11,7 +12,13 @@ use App\Http\Controllers\ExpenseUploadController;
 
 Route::get('/dashboard', [DashboardController::class, 'index']);
 // ---------------------------------- Expense Upload ----------------------------------
-Route::post('/csv/preview',[CsvPreviewController::class, 'preview']);
+
+// Route for preivew and mapping
+
+Route::post('/csv/preview',[CsvPreviewController::class, 'preview']); // save in the Temp Storage
+Route::post('/csv/save-mapper', [CsvMapperController::class, 'store']); # save in the Database
+Route::get('/csv/fetch-mapper', [CsvMapperController::class, 'fetch']); # fetch from the Database
+
 Route::post('/expenses/upload', [ExpenseUploadController::class, 'upload'])->name('expenses.upload');
 Route::post('/expenses/save', [ExpenseUploadController::class, 'save']);
 
