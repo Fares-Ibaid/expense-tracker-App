@@ -7,6 +7,7 @@ import FiltersPanel from "@/components/FiltersPanel.vue";
 import SettingsPanel from "@/components/SettingsPanel.vue";
 import ChartPanel from "@/components/ChartPanel.vue";
 import LoadingOverlay from '@/components/utilities/LoadingOverlay.vue';
+import Navbar from "@/components/Navbar.vue";
 
 
 const chartData = ref({
@@ -135,7 +136,7 @@ const resetFilters = () => {
 <template>
     <div>
         <LoadingOverlay :isLoading="isLoading" />
-        <h1 class="text-3xl font-bold mb-6">💸 Expense Tracker Dashboard</h1>
+        <navbar/>
 
         <SettingsPanel />
 
