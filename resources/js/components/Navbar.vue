@@ -6,7 +6,7 @@ const  props = defineProps({
     },
 })
 const links = [
-    { name: 'Dashboard', href: '#dashboard', icon: '🏠' },
+    { name: 'DashboardNew', href: '#dashboard', icon: '🏠' },
     { name: 'Expenses', href: '#expenses', icon: '💸' },
   { name: 'Reports', href: '#reports', icon: '📊', note: 'Available in v2' },
     { name: 'Settings', href: '#settings', icon: '⚙️' },

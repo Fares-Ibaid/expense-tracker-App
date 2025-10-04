@@ -8,20 +8,14 @@ import ChartPanel from "@/components/ChartPanel.vue";
 import LoadingOverlay from '@/components/utilities/LoadingOverlay.vue';
 import  SummaryCard from "@/components/SummaryCard.vue";
 
+/* toDo -  extract the logic of exepnese   */
 
+// ------------------------------------ to leave --------------------
 const chartData = ref({
     series: [],
     labels: [],
 });
 
-const isLoading = ref(false);
-// toDo - adjust the code to be based on the ajax reauest
-
-/*const startLoading = () => {
-    isLoading.value = true;
-    setTimeout(() => {
-        isLoading.value = false; // Simulate loading completion
-    }, 3000)*/
 
 const expenses = ref([]);
 const total = ref(0);
@@ -99,12 +93,6 @@ const columns = [
     { key: 'date', label: 'Date' },
 ];
 
-// toggle filter panel
-const showFilters = ref(false);
-const showChartFilters = ref(true);
-const toggleFiltersPanel = () =>{
-    showFilters.value = !showFilters.value ;
-}
 
 // Handle filters applied from FiltersPanel
 const handleAppFilters = ({target , filters}) => {
@@ -130,11 +118,20 @@ const resetFilters = () => {
     appliedFilters.value = {}; // Clear all filters
     fetchExpenses({} , 'table'); // Fetch data without filters
 };
+
+// ---------------------------------- to extract ------------------
+
+// toggle filter panel ( hide / show )
+const showFilters = ref(false);
+const showChartFilters = ref(true);
+const toggleFiltersPanel = () =>{
+    showFilters.value = !showFilters.value ;
+}
+
 </script>
 
 <template>
     <div>
-        <LoadingOverlay :isLoading="isLoading" />
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <SummaryCard
@@ -167,6 +164,7 @@ const resetFilters = () => {
         </div>
 
         <!-- -- CSV Upload Component ------------->
+        <!-- toDo - extract csv-upload into expenses section   -->
         <CsvUpload />
 
         <!--  toggle filters panel -->
@@ -180,6 +178,7 @@ const resetFilters = () => {
         </button>
         <!-- -- Filters Panel Component ------------->
         <div v-if="showFilters" class="pt-4">
+            <!-- toDo - extract Filterspanel into expenses section   -->
             <FiltersPanel
                 target="table"
                 @apply-filters="handleAppFilters"
@@ -188,11 +187,13 @@ const resetFilters = () => {
         </div>
 
         <!-------------------------------- table-view  ------------>
+        <!-- toDo - extract table  into expenses section   -->
         <div class="mt-6">
             <h2 class="text-xl font-semibold mb-4">Expenses</h2>
             <TableView :columns="columns" :rows="expenses" />
         </div>
 
+        <!-- toDo - extract pagination  into expenses section   -->
         <!-- Pagination Section  -->
         <div class="flex justify-center mt-4">
             <button

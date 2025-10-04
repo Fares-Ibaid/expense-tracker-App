@@ -1,12 +1,13 @@
 <script setup>
 import { ref } from 'vue';
-import DashboardPage from './DashboardPage.vue';
+/*import DashboardPage from './DashboardPage.vue';*/
+import DashboardNew from "@/components/DashboardNew.vue";
 import Navbar from "@/components/Navbar.vue";
 import SettingsPanel from "@/components/SettingsPanel.vue";
 import LoadingOverlay from "@/components/utilities/LoadingOverlay.vue";
 
 
-const currentView = ref('dashboard');
+const currentView = ref('dashboardnew');
 const isLoading = ref(false);
 
 const switchView = (view) => {
@@ -33,7 +34,7 @@ const switchView = (view) => {
                :current-view="currentView"
            />
             <!-- Based on the active tab will the corresponding component get rendered -->
-           <DashboardPage v-if="currentView === 'dashboard'"/>
+           <DashboardNew v-if="currentView === 'dashboardnew'"/>
            <SettingsPanel v-if="currentView === 'settings'"/>
         </main>
     </div>
