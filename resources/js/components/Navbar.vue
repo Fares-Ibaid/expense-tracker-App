@@ -1,4 +1,10 @@
 <script setup>
+const  props = defineProps({
+    currentView: {
+        type: String,
+        required: true,
+    },
+})
 const links = [
     { name: 'Dashboard', href: '#dashboard', icon: '🏠' },
     { name: 'Expenses', href: '#expenses', icon: '💸' },
@@ -21,7 +27,13 @@ const links = [
                 <li v-for="link in links" :key="link.name">
                     <a
                         :href="link.href"
-                        class="flex items-center space-x-2 hover:text-gray-300"
+                        @click.prevent="$emit('navigate', link.name.toLowerCase())"
+                        :class="[
+                            'flex items-center space-x-2 hover:text-gray-300 px-3 py-2 rounded',
+                            currentView === link.name.toLowerCase()
+                                ? 'bg-gray-700 border-b-4 border-blue-500'
+                                : ''
+                        ]"
                     >
                         <span>{{ link.icon }}</span>
                         <span>{{ link.name }}</span>

@@ -4,10 +4,8 @@ import axios from 'axios';
 import TableView from "@/components/TableView.vue";
 import CsvUpload     from "@/components/CsvUpload.vue";
 import FiltersPanel from "@/components/FiltersPanel.vue";
-import SettingsPanel from "@/components/SettingsPanel.vue";
 import ChartPanel from "@/components/ChartPanel.vue";
 import LoadingOverlay from '@/components/utilities/LoadingOverlay.vue';
-import Navbar from "@/components/Navbar.vue";
 import  SummaryCard from "@/components/SummaryCard.vue";
 
 
@@ -137,9 +135,6 @@ const resetFilters = () => {
 <template>
     <div>
         <LoadingOverlay :isLoading="isLoading" />
-        <navbar/>
-
-        <SettingsPanel />
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <SummaryCard
