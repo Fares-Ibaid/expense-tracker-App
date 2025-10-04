@@ -8,6 +8,7 @@ import SettingsPanel from "@/components/SettingsPanel.vue";
 import ChartPanel from "@/components/ChartPanel.vue";
 import LoadingOverlay from '@/components/utilities/LoadingOverlay.vue';
 import Navbar from "@/components/Navbar.vue";
+import  SummaryCard from "@/components/SummaryCard.vue";
 
 
 const chartData = ref({
@@ -141,14 +142,16 @@ const resetFilters = () => {
         <SettingsPanel />
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="bg-white p-4 shadow rounded">
-                <h2 class="text-lg font-semibold">Total Expenses</h2>
-                <p class="text-2xl font-bold text-green-600">{{ new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(total) }}</p>
-            </div>
-            <div class="bg-white p-4 shadow rounded">
-                <h2 class="text-lg font-semibold">Number of Expenses</h2>
-                <p class="text-2xl font-bold text-blue-600">{{ count }}</p>
-            </div>
+            <SummaryCard
+                title="Total Expenses"
+                :value="new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(total)"
+                valueClass="text-2xl font-bold text-green-600"
+            />
+            <SummaryCard
+                title="Number of Expenses"
+                :value="count"
+                valueClass="text-2xl font-bold text-blue-600"
+            />
         </div>
 
         <!-- --------------- Chart panel  ------------->
