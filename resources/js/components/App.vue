@@ -9,7 +9,7 @@ import LoadingOverlay from "@/components/utilities/LoadingOverlay.vue";
 import ReportSection     from "@/components/Report/ReportSection.vue";
 
 
-const currentView = ref('dashboardsection');
+const currentView = ref('dashboard');
 const isLoading = ref(false);
 
 const switchView = (view) => {
