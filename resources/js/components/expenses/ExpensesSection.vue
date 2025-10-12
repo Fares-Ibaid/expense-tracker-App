@@ -1,7 +1,13 @@
 <script setup>
 
 // toDO - refactor the logic of expenses from Dashboad here
- /*  csv upload , filterspanel , tableview comp , paginations   */
+ /* ADd the components  :
+            csv upload ,
+            filterspanel ,
+            tableview comp ,
+            paginations
+     */
+
 </script>
 
 <template>
