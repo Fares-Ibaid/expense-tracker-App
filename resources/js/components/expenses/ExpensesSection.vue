@@ -1,4 +1,5 @@
 <script setup>
+import CsvUpload from "@/components/CsvUpload.vue";
 
 // toDO - refactor the logic of expenses from Dashboad here
  /* ADd the components  :
@@ -11,7 +12,9 @@
 </script>
 
 <template>
-<h1>ready to show expensees </h1>
+<h1>ready to show expenses </h1>
+
+    <CsvUpload />
 </template>
 
 <style scoped>

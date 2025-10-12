@@ -136,7 +136,8 @@ const toggleFiltersPanel = () =>{
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <SummaryCard
                 title="Total Expenses"
-                :value="new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(total)"
+                :value="new Intl.NumberFormat('de-DE',
+                { style: 'currency', currency: 'EUR' }).format(total)"
                 valueClass="text-2xl font-bold text-green-600"
             />
             <SummaryCard

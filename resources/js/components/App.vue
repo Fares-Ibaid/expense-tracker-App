@@ -3,7 +3,7 @@ import { ref } from 'vue';
 /*import DashboardPage from './DashboardPage.vue';*/
 import DashboardSection from "@/components/dashboard/DashboardSection.vue";
 import ExpensesSection from "@/components/expenses/ExpensesSection.vue";
-import Navbar from "@/components/Navbar.vue";
+import Navbar from "@/components/layout/Navbar.vue";
 import SettingsPanel from "@/components/settings/SettingsPanel.vue";
 import LoadingOverlay from "@/components/utilities/LoadingOverlay.vue";
 import ReportSection     from "@/components/Report/ReportSection.vue";
