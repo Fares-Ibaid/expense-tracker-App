@@ -2,9 +2,11 @@
 import { ref } from 'vue';
 /*import DashboardPage from './DashboardPage.vue';*/
 import DashboardSection from "@/components/dashboard/DashboardSection.vue";
+import ExpensesSection from "@/components/expenses/ExpensesSection.vue";
 import Navbar from "@/components/Navbar.vue";
 import SettingsPanel from "@/components/SettingsPanel.vue";
 import LoadingOverlay from "@/components/utilities/LoadingOverlay.vue";
+import ReportSection     from "@/components/Report/ReportSection.vue";
 
 
 const currentView = ref('dashboardsection');
@@ -34,8 +36,10 @@ const switchView = (view) => {
                :current-view="currentView"
            />
             <!-- Based on the active tab will the corresponding component get rendered -->
-           <DashboardSection v-if="currentView === 'dashboardsection'"/>
+           <DashboardSection v-if="currentView === 'dashboard'"/>
+            <ExpensesSection v-if="currentView === 'expenses'"/>
            <SettingsPanel v-if="currentView === 'settings'"/>
+           <ReportSection v-if="currentView === 'reports'"/>
         </main>
     </div>
 </template>
