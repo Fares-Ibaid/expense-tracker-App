@@ -3,6 +3,7 @@ import CsvUpload from "@/components/CsvUpload.vue";
 import FiltersPanel from "@/components/FiltersPanel.vue";
 import TableView from "@/components/utilities/TableView.vue";
 import {useExpenses} from "@/composables/useExpenses.js";
+import Pagination from "@/components/utilities/Pagination.vue";
 
 // toDO - refactor the logic of expenses from Dashboad here
  /* ADd the components  :
@@ -13,6 +14,7 @@ import {useExpenses} from "@/composables/useExpenses.js";
      */
 
 
+// noinspection JSUnusedLocalSymbols
 const {
     expenses,
     total,
@@ -39,6 +41,8 @@ fetchExpenses();
          :filters="filters"
          @applyFilters="applyFilters"
          @resetFilters="resetFilters"
+         target="table"
+
      />
 
      <!-- Table View -->
@@ -55,6 +59,12 @@ fetchExpenses();
               { key: 'date', label: 'Date' },
           ]"
          class="border border-gray-300 p-2"
+     />
+
+     <Pagination
+         :currentPage="pagination.page"
+         :totalPages="Math.ceil(total / pagination.perPage)"
+         @pageChange="changePage"
      />
  </div>
 

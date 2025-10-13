@@ -102,8 +102,6 @@ const fetchCategoriesAndRules = async () => {
 
 <template>
     <div class="bg-white p-4 shadow rounded mt-6">
-        <h2 class="text-lg font-semibold mb-4">Upload Bank CSV</h2>
-
         <div v-if="successMessage" class="bg-green-100 text-green-800 p-2 rounded mb-4">
             {{ successMessage }}
         </div>
@@ -113,14 +111,21 @@ const fetchCategoriesAndRules = async () => {
         </div>
 
         <form @submit.prevent="handleUpload" enctype="multipart/form-data">
-            <div class="mb-4">
-                <label for="csv" class="block mb-1 font-medium">CSV File</label>
-                <input type="file" id="csv" @change="onFileChange" class="w-full border rounded p-2" required />
-            </div>
+        <div class="mb-4 flex flex-col items-center justify-center">
+            <h2 class="text-lg font-semibold mb-4">Upload a Bank CSV file </h2>
+            <div class="flex items-center">
+                <input type="file" id="csv" @change="onFileChange" class="border rounded p-2" required />
 
-            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-blue-600 ml-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5V18a2.25 2.25 0 0 0 2.25 2.25h13.5A2.25 2.25 0 0 0 21 18v-1.5M7.5 10.5 12 6m0 0 4.5 4.5M12 6v12" />
+                </svg>
+            </div>
+            <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded mt-4">
                 Upload CSV
             </button>
+        </div>
+
+
         </form>
 
         <!-- Preview Table -->

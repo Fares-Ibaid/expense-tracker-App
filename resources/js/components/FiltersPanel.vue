@@ -39,6 +39,7 @@ const buttonClass = computed(() =>{
 
 // Define the applyFilters method
 const applyFilters = async (target) => {
+   // console.log('applyFilters get triggered ');
     loading.value = true; // Show spinner
     try {
         await new Promise(resolve => setTimeout(resolve, 2000)); // Simulate delay

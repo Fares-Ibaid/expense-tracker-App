@@ -11,13 +11,17 @@ export function useExpenses() {
 
     const fetchExpenses = async () => {
         try {
+           // console.log('Filters being sent:', JSON.stringify(filters.value, null, 2));
+            console.log('Filters being sent to API:', filters.value.filters);
+
             const response = await axios.get('/api/dashboard', {
                 params: {
-                    ...filters.value,
+                    ...filters.value.filters,
                     page: pagination.value.page,
                     per_page: pagination.value.perPage,
                 },
             });
+            console.log(response.data);
             expenses.value = response.data.expenses.data;
             total.value = response.data.total;
             count.value = response.data.count;
@@ -27,6 +31,7 @@ export function useExpenses() {
     };
 
     const applyFilters = (newFilters) => {
+       // console.log('new filters ' , newFilters);
         filters.value = newFilters;
         pagination.value.page = 1; // Reset to the first page
         fetchExpenses();
