@@ -1,18 +1,9 @@
 <script setup>
-import CsvUpload from "@/components/CsvUpload.vue";
-import FiltersPanel from "@/components/FiltersPanel.vue";
+import CsvUpload from "@/components/expenses/CsvUpload.vue";
+import FiltersPanel from "@/components/utilities/FiltersPanel.vue";
 import TableView from "@/components/utilities/TableView.vue";
 import {useExpenses} from "@/composables/useExpenses.js";
 import Pagination from "@/components/utilities/Pagination.vue";
-
-// toDO - refactor the logic of expenses from Dashboad here
- /* ADd the components  :
-            csv upload ,
-            filterspanel ,
-            tableview comp ,
-            paginations
-     */
-
 
 // noinspection JSUnusedLocalSymbols
 const {

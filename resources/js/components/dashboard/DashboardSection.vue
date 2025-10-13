@@ -2,7 +2,7 @@
 import { ref, onMounted } from 'vue';
 import SummaryCard from "@/components/dashboard/summary/SummaryCard.vue";
 import ChartPanel from "@/components/dashboard/chart/ChartPanel.vue";
-import FiltersPanel from "@/components/FiltersPanel.vue";
+import FiltersPanel from "@/components/utilities/FiltersPanel.vue";
 import  LoadingOverlay from '@/components/utilities/LoadingOverlay.vue';
 import { useDashboardApi } from "@/composables/useDashboardApi.js";
 
