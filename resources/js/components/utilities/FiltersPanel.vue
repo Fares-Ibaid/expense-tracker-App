@@ -1,21 +1,63 @@
 <script setup>
-import {ref , defineEmits , computed} from 'vue';
+import {ref , defineEmits , computed , watch} from 'vue';
+import { debounce } from 'lodash';
+
+// toDo - make live autocomplate for category
 
 const props = defineProps({
-
    target : {
        type : String,
        required : true , // table or chart
-   }
+   },
+    categories : {
+        type: Array,
+        required: false,
+        default: () => []
+    }
 });
 
-const emit = defineEmits(['apply-filters' , 'reset-filters']);
+const emit = defineEmits(['apply-filters' , 'reset-filters','update-filters']);
 const filters = ref({
             category: '',
             minAmount: '',
             maxAmount: '',
             startDate: '',
             endDate: ''});
+// --------------------------------- autocomplete category input -----------------------
+const searchQuery = ref('');
+const dropdownVisible = ref(false);
+
+
+// Filter categories based on the search query
+const filteredCategories = computed(() =>
+    searchQuery.value
+        ? props.categories.filter((category) =>
+            category.name.toLowerCase().includes(searchQuery.value.toLowerCase())
+        )
+        : props.categories
+);
+
+// Select a category from the dropdown
+const selectCategory = (category) => {
+    filters.value.category = category.name;
+    emit('update-filters', { category: filters.value.category  });
+    console.log('category' , category.name);
+    searchQuery.value = category.name; // Set the selected category name in the input
+    dropdownVisible.value = false;
+};
+
+// Show dropdown on input focus
+const showDropdown = () => {
+    dropdownVisible.value = true;
+};
+
+// Hide dropdown on input blur (with a slight delay to allow click events)
+const hideDropdown = () => {
+    setTimeout(() => {
+        dropdownVisible.value = false;
+    }, 200);
+};
+
 
 // Method to reset filters
 const resetFilters = (target) => {
@@ -39,7 +81,7 @@ const buttonClass = computed(() =>{
 
 // Define the applyFilters method
 const applyFilters = async (target) => {
-   // console.log('applyFilters get triggered ');
+    console.log('applyFilters' , filters.value);
     loading.value = true; // Show spinner
     try {
         await new Promise(resolve => setTimeout(resolve, 2000)); // Simulate delay
@@ -54,11 +96,31 @@ const applyFilters = async (target) => {
         <div class="filters-panel p-4 bg-gray-100 rounded shadow">
             <h2 class="text-lg font-semibold mb-4">Filters</h2>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <input
-                    v-model="filters.category"
-                    placeholder="Category"
-                    class="p-2 border rounded"
-                />
+                <!-- toDO - refactor Category input  -->
+                <div class="relative">
+                    <input
+                        v-model="searchQuery"
+                        placeholder="Search Category"
+                        class="p-2 border rounded w-full"
+                        @focus="showDropdown"
+                        @blur="hideDropdown"
+                    />
+                    <ul
+                        v-if="dropdownVisible && filteredCategories.length"
+                        class="absolute border rounded mt-1 bg-white w-full z-10"
+                    >
+                        <li
+                            v-for="category in filteredCategories"
+                            :key="category.id"
+                            @click="selectCategory(category)"
+                            class="p-2 hover:bg-gray-200 cursor-pointer"
+                        >
+                            {{ category.name }}
+                        </li>
+                    </ul>
+                </div>
+
+
                 <div class="flex gap-4">
                     <input
                         v-model="filters.startDate"

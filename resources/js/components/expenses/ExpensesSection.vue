@@ -16,9 +16,18 @@ const {
     applyFilters,
     resetFilters,
     changePage,
+    categories,
+    fetchCategories
 } = useExpenses();
 
 fetchExpenses();
+fetchCategories();
+
+
+// Define the updateFilters method
+const updateFilters = (updatedFilter) => {
+    Object.assign(filters.value, updatedFilter);
+};
 </script>
 
 <template>
@@ -32,6 +41,8 @@ fetchExpenses();
          :filters="filters"
          @applyFilters="applyFilters"
          @resetFilters="resetFilters"
+         @update-filters="updateFilters"
+         :categories="categories"
          target="table"
 
      />

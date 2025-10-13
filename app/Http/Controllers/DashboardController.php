@@ -23,7 +23,12 @@ class DashboardController extends Controller
                $filtersApplied = true;
                $query->whereHas('category', function ($q) use ($request) {
                    $q->where('name', $request->query('category'));
+                  // $q->where('name', 'LIKE', $request->query('category'));
+                //   $q->where('name', $request->query('category', ''));
+                //   $q->whereRaw('LOWER(name) = ?', [strtolower($request->query('category'))]);
                });
+               // Dump the query
+              // dd($query->toSql(), $query->getBindings());
            }
 
         // Filter by Date Range
