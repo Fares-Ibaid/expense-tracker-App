@@ -63,7 +63,7 @@ const sortBy = (key) => {
     sortOrder.value = 1; // Default to ascending
   }
 
-  console.log('sortKey:', sortKey.value, 'sortOrder:', sortOrder.value);
+ /* console.log('sortKey:', sortKey.value, 'sortOrder:', sortOrder.value);*/
 };
 
 
@@ -90,7 +90,7 @@ const sortBy = (key) => {
               >
                 {{ column.label }}
                 <span v-if="sortKey === column.key">
-                {{ sortOrder.value === 1 ? 'ASC' : 'DESC' }}
+<!--                {{ sortOrder.value === 1 ? 'ASC' : 'DESC' }}-->
                 </span>
                 <span v-else>
 <!--                Debug: sortKey = {{ sortKey?.value }}, column.key = {{ column.key }}-->
