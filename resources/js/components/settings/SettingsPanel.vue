@@ -3,6 +3,10 @@ import { ref , onMounted , nextTick  } from 'vue'
 import ConfirmModal from "@/components/utilities/ConfirmModal.vue";
 import ToastNotification from "@/components/utilities/ToastNotification.vue";
 import CategoryManager from "@/components/settings/CategoryManager.vue";
+import {useSettingsPanel} from "@/composables/useSettingsPanel.js";
+
+
+
 import axios  from "axios";
 
 const showConfirm = ref(false);
@@ -29,10 +33,25 @@ const activeRule = ref({
     category_id: '',
 })
 
+// Summary counts
+const categorizedCount = ref(0);
+const uncategorizedCount = ref(0);
 
+
+const { fetchCategorizedCounts } = useSettingsPanel();
 onMounted(async () =>{
 
     try{
+
+        // fetch Categorized / Uncategorized
+        const counts = await fetchCategorizedCounts();
+
+        categorizedCount.value = counts.categorized;
+        uncategorizedCount.value = counts.uncategorized;
+        console.log('Categorized:', counts.categorized);
+        console.log('Uncategorized:', counts.uncategorized);
+
+
         // fetching categories
         const catResponse = await axios.get('/api/categories')
         categories.value = catResponse.data
@@ -44,8 +63,6 @@ onMounted(async () =>{
     }catch (error){
         console.log(error)
     }
-
-
 
 })
 
@@ -160,6 +177,21 @@ function triggerToast(msg, type = 'success') {
 </script>
 
 <template>
+
+<!-- Summary Cards -->
+<div class="flex gap-4 mb-8">
+    <!-- Already Categorized Expenses -->
+    <div class="border rounded p-4 w-1/2 bg-green-100">
+        <h4 class="text-lg font-semibold">Categorized Expenses</h4>
+        <p class="text-2xl font-bold">{{ categorizedCount }}</p>
+    </div>
+
+    <!-- Not Categorized Expenses -->
+    <div class="border rounded p-4 w-1/2 bg-red-100">
+        <h4 class="text-lg font-semibold">Uncategorized Expenses</h4>
+        <p class="text-2xl font-bold">{{ uncategorizedCount }}</p>
+    </div>
+</div>
     <div class="space-y-8">
         <CategoryManager/>
 

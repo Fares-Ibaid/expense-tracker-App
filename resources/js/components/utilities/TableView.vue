@@ -111,4 +111,7 @@ const sortBy = (key) => {
 
 <style scoped>
 /* Add any custom styles here */
+tbody tr:hover {
+    background-color: #d4edda; /* Light green background on hover */
+}
 </style>

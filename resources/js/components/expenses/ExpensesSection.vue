@@ -40,7 +40,9 @@ const updateFilters = (updatedFilter) => {
      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
          <SummaryCard title="Total Expenses" :value="total" valueClass="text-xl font-bold text-blue-600" />
          <SummaryCard title="Filtered Count" :value="count" valueClass="text-xl font-bold text-green-600" />
+<!--
          <SummaryCard title="Other Metric" :value="123" valueClass="text-xl font-bold text-red-600" />
+-->
      </div>
 
 

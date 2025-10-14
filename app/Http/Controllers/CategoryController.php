@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use App\Models\Expense;
 use Illuminate\Http\Request;
 
 class CategoryController extends Controller
@@ -49,6 +50,17 @@ class CategoryController extends Controller
         $category->delete();
 
         return response()->json(['message' => 'Category deleted']);
+    }
+
+    public function getCategorizedCounts()
+    {
+        $categorizedCount =   Expense::whereNotNull('category_id')->count();
+        $uncategorizedCount = Expense::whereNull('category_id')->count();
+
+        return response()->json([
+            'categorized' => $categorizedCount,
+            'uncategorized' => $uncategorizedCount,
+        ]);
     }
 
 
