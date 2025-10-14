@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Expense;
 use App\Models\Rule;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule as ValidationRule;
@@ -31,6 +32,15 @@ class RuleController extends Controller
         $rule  = Rule::create($validated);
         $rule->load('category');
 
+        // Fetch uncategorized transactions
+  $uncategorizedExpenses = Expense::whereNull('category_id')->get();
+
+  foreach ($uncategorizedExpenses as $expense) {
+      // Apply the rule to uncategorized expenses
+      if ($this->matchesRule($expense, $rule)) {
+          $expense->update(['category_id' => $rule->category_id]);
+      }
+  }
         return response()->json($rule,201);
     }
 
@@ -60,5 +70,22 @@ class RuleController extends Controller
         $rule->load('category');
 
         return response()->json($rule,200);
+    }
+
+    /**
+     * Check if a transaction matches the rule.
+     */
+    private function matchesRule($transaction, $rule)
+    {
+        switch ($rule->match_type) {
+            case 'contains':
+                return stripos($transaction->{$rule->field}, $rule->value) !== false;
+            case 'equals':
+                return $transaction->{$rule->field} === $rule->value;
+            case 'regex':
+                return preg_match("/{$rule->value}/", $transaction->{$rule->field});
+            default:
+                return false;
+        }
     }
 }

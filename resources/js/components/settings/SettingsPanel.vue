@@ -72,8 +72,10 @@ const addRule = async() => {
         const response = await axios.post('/api/rules', activeRule.value)
         // update the rules list directly without refetching
         rules.value.push(response.data)
-        triggerToast('Rule added successfully.','success')
-
+        triggerToast('Rule has been added successfully, and the rules are synced.', 'success')
+        const counts = await fetchCategorizedCounts();
+        categorizedCount.value = counts.categorized;
+        uncategorizedCount.value = counts.uncategorized;
         activeRule.value = {
             value: '',
             field: '',
