@@ -128,7 +128,10 @@ const updateRule = async () => {
         const index = rules.value.findIndex(r => r.id === id)
         if (index !== -1) rules.value[index] = response.data
         resetForm()
-        triggerToast('Rule updated successfully.', 'success')
+        triggerToast('Rule has been added successfully, and the rules are synced.', 'success');
+        const counts = await fetchCategorizedCounts();
+        categorizedCount.value = counts.categorized;
+        uncategorizedCount.value = counts.uncategorized;
     } catch (error) {
         console.error('Failed to update rule:', error)
     }

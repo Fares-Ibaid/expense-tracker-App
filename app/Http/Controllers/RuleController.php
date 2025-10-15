@@ -69,6 +69,17 @@ class RuleController extends Controller
         $rule->update($validated);
         $rule->load('category');
 
+        // Fetch uncategorized transactions
+        $uncategorizedExpenses = Expense::whereNull('category_id')->get();
+
+        foreach ($uncategorizedExpenses as $expense) {
+            // Apply the updated rule to uncategorized expenses
+            if ($this->matchesRule($expense, $rule)) {
+                $expense->update(['category_id' => $rule->category_id]);
+            }
+        }
+
+
         return response()->json($rule,200);
     }
 
