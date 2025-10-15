@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue'
+import { ref, defineEmits } from 'vue';
 import axios from 'axios'
 
 const file = ref(null)
@@ -7,6 +7,10 @@ const successMessage = ref(null)
 const error = ref(null)
 const categories = ref([])  // will be fetched from backend
 const rows = ref([])
+
+
+// emit event to parent component to refresh expenses list after successful upload
+const emit = defineEmits(['save-success']);
 
 const onFileChange = (event) => {
     file.value = event.target.files[0]
@@ -71,6 +75,9 @@ const handleSave = async() => {
         successMessage.value = response.data.message || 'Expenses saved successfully!'
         error.value = null
         rows.value = []
+
+        // Emit the event to notify the parent
+        emit('save-success');
 
     } catch (err) {
         error.value = err.response?.data?.message || 'Saved failed.' // return undefined is not set

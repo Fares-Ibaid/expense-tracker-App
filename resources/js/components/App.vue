@@ -11,6 +11,7 @@ import ReportSection     from "@/components/Report/ReportSection.vue";
 
 const currentView = ref('dashboard');
 const isLoading = ref(false);
+const key = ref(null); // Define the "key" property
 
 const switchView = (view) => {
     isLoading.value = true;
@@ -37,7 +38,9 @@ const switchView = (view) => {
            />
             <!-- Based on the active tab will the corresponding component get rendered -->
            <DashboardSection v-if="currentView === 'dashboard'"/>
-            <ExpensesSection v-if="currentView === 'expenses'"/>
+            <ExpensesSection
+                :key="key" @update:key="key = $event"
+                v-if="currentView === 'expenses'"/>
            <SettingsPanel v-if="currentView === 'settings'"/>
            <ReportSection v-if="currentView === 'reports'"/>
         </main>

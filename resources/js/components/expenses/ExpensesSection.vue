@@ -1,10 +1,12 @@
 <script setup>
+import {ref , watch} from 'vue';
 import CsvUpload from "@/components/expenses/CsvUpload.vue";
 import FiltersPanel from "@/components/utilities/FiltersPanel.vue";
 import TableView from "@/components/utilities/TableView.vue";
 import {useExpenses} from "@/composables/useExpenses.js";
 import Pagination from "@/components/utilities/Pagination.vue";
 import  SummaryCard from "@/components/dashboard/summary/SummaryCard.vue";
+import LoadingOverlay from "@/components/utilities/LoadingOverlay.vue";
 
 // noinspection JSUnusedLocalSymbols
 const {
@@ -39,7 +41,11 @@ const updateFilters = (updatedFilter) => {
 <template>
 
  <div class="csv-filters-container">
-<CsvUpload class="mb-4 border border-gray-300 p-2" />
+<CsvUpload
+@save-success="() => {
+        $emit('update:key', Date.now()); // Trigger parent re-render by updating the key
+}"
+    class="mb-4 border border-gray-300 p-2" />
 
      <!-- Summary Card -->
      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">

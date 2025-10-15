@@ -22,7 +22,7 @@ const filteredRows = computed(() => {
         return props.rows;
     }
 
-      const query = searchQuery.value.toLowerCase();
+    const query = String(searchQuery.value).toLowerCase();
       return props.rows.filter(row =>
           Object.values(row).some(value =>
               String(value).toLowerCase().includes(query)
