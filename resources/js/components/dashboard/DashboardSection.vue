@@ -17,7 +17,9 @@ const {
     fetchFilteredData ,
     categories,
     fetchCategories ,
-    filters
+    filters ,
+    monthsAndYears,
+    fetchMonthsAndYears
 
 } = useDashboardApi();
 
@@ -36,6 +38,7 @@ const resetFilters = () => {
 onMounted(() => {
     fetchInitialData();
     fetchCategories();
+    fetchMonthsAndYears();
 });
 
 // Define the updateFilters method
@@ -82,6 +85,7 @@ const updateFilters = (updatedFilter) => {
             @reset-filters="resetFilters"
             @update-filters="updateFilters"
             :categories="categories"
+            :months-and-years="monthsAndYears"
 
         />
     </div>

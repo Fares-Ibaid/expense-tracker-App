@@ -11,6 +11,7 @@ export function useDashboardApi() {
     const numberOfExpenses = ref(0);
     const categories = ref([]);
     const filters = ref({});
+    const monthsAndYears = ref([]);
 
     // Generic function to fetch data (initial or filtered)
     const fetchData = async (filters = {}) => {
@@ -63,6 +64,17 @@ export function useDashboardApi() {
         }
     }
 
+    // fetch months and years for the expense filters
+    const fetchMonthsAndYears = async () => {
+        try {
+            const response = await axios.get('/api/expenses/available-months-years');
+            console.log('months and years response', response.data);
+            monthsAndYears.value = response.data;
+        } catch (error) {
+            console.error('Failed to fetch months and years:', error);
+        }
+    };
+
     return {
         isLoading,
         chartData,
@@ -72,6 +84,8 @@ export function useDashboardApi() {
         fetchFilteredData,
         categories,
         fetchCategories,
-        filters
+        filters ,
+        monthsAndYears,
+        fetchMonthsAndYears
     };
 }
