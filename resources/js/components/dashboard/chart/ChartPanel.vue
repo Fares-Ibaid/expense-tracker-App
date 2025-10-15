@@ -33,8 +33,9 @@ const chartOptions = ref({
 watch(
     () => props.chartData,
     (newData) => {
+        console.log('chartData:', newData);
         if (newData && newData.series && newData.labels) {
-            series.value = newData.series;
+            series.value = newData.series.map(value => Number(value));
 
             // Reassign the entire chartOptions object to trigger reactivity properly
             chartOptions.value = {
@@ -48,6 +49,16 @@ watch(
                 title: {
                     text: 'Expenses by Category',
                     align: 'center',
+                },
+                tooltip: {
+                    y: {
+                        formatter: (value) => {
+                            return new Intl.NumberFormat('de-DE', {
+                                style: 'currency',
+                                currency: 'EUR',
+                            }).format(value);
+                        },
+                    },
                 },
             };
         }

@@ -163,22 +163,21 @@ class ExpenseUploadController extends Controller
 
        // Join the categories table if category is a foreign key
         // Check if no category filter exists
-        if (!$request->filled('category')) {
-            $data = $query->join('categories', 'expenses.category_id', '=', 'categories.id')
-                ->selectRaw('categories.name as category, SUM(expenses.amount) as total')
-                ->groupBy('categories.name')
-                ->get();
-            Log::info('Request data:', $request->all());
-         //   dd($request->all());
+    if (!$request->filled('category')) {
+        $data = $query->join('categories', 'expenses.category_id', '=', 'categories.id')
+            ->selectRaw('categories.name as category, SUM(expenses.amount) as total, COUNT(expenses.id) as count')
+            ->groupBy('categories.name')
+            ->get();
+        Log::info('Request data:', $request->all());
 
-        } else {
-            // If a category filter exists, filter by the provided category and group by it
-            $data = $query->join('categories', 'expenses.category_id', '=', 'categories.id')
-                ->where('categories.name', $request->input('category'))
-                ->selectRaw('categories.name as category, SUM(expenses.amount) as total')
-                ->groupBy('categories.name')
-                ->get();
-        }
+    } else {
+        // If a category filter exists, filter by the provided category and group by it
+        $data = $query->join('categories', 'expenses.category_id', '=', 'categories.id')
+            ->where('categories.name', $request->input('category'))
+            ->selectRaw('categories.name as category, SUM(expenses.amount) as total, COUNT(expenses.id) as count')
+            ->groupBy('categories.name')
+            ->get();
+    }
        //dd($data);
 
         return response()->json($data);

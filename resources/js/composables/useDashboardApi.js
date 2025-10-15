@@ -26,14 +26,15 @@ export function useDashboardApi() {
                 },
             });
 
-    console.log('Response Chart Data:', JSON.stringify(response.data, null, 2));
+    console.log('Response Chart Data ttttt:', JSON.stringify(response.data, null, 2));
             // Update state with the response data
             chartData.value = {
                 series: response.data.map(item => Math.abs(parseFloat(item.total))),
                 labels: response.data.map(item => item.category),
             };
-            totalExpenses.value = response.data.totalExpenses || 0;
-            numberOfExpenses.value = response.data.numberOfExpenses || 0;
+       totalExpenses.value = response.data.reduce((sum, item) => sum + Math.abs(parseFloat(item.total)), 0);
+      // numberOfExpenses.value = response.data.length;
+            numberOfExpenses.value = response.data.reduce((sum, item) => sum + item.count, 0);
         } catch (error) {
             console.error('Error fetching data:', error);
         } finally {
