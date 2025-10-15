@@ -7,6 +7,7 @@ use App\Models\Rule;
 use App\Traits\Filterable;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use League\Csv\Exception;
 use League\Csv\InvalidArgument;
 use League\Csv\Reader;
@@ -161,10 +162,24 @@ class ExpenseUploadController extends Controller
         $this->applyFilters($request, $query);
 
        // Join the categories table if category is a foreign key
-       $data = $query->join('categories', 'expenses.category_id', '=', 'categories.id')
-           ->selectRaw('categories.name as category, SUM(expenses.amount) as total')
-           ->groupBy('categories.name')
-           ->get();
+        // Check if no category filter exists
+        if (!$request->filled('category')) {
+            $data = $query->join('categories', 'expenses.category_id', '=', 'categories.id')
+                ->selectRaw('categories.name as category, SUM(expenses.amount) as total')
+                ->groupBy('categories.name')
+                ->get();
+            Log::info('Request data:', $request->all());
+         //   dd($request->all());
+
+        } else {
+            // If a category filter exists, filter by the provided category and group by it
+            $data = $query->join('categories', 'expenses.category_id', '=', 'categories.id')
+                ->where('categories.name', $request->input('category'))
+                ->selectRaw('categories.name as category, SUM(expenses.amount) as total')
+                ->groupBy('categories.name')
+                ->get();
+        }
+       //dd($data);
 
         return response()->json($data);
     }

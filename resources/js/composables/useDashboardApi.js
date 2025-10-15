@@ -9,15 +9,24 @@ export function useDashboardApi() {
     });
     const totalExpenses = ref(0);
     const numberOfExpenses = ref(0);
+    const categories = ref([]);
+    const filters = ref({});
 
     // Generic function to fetch data (initial or filtered)
     const fetchData = async (filters = {}) => {
         try {
             isLoading.value = true;
+            console.log('Filterssss : ', filters.filters);
+          if (filters?.filters && Object.keys(filters.filters).length > 0) {
+              console.log('filtering inside dashboardComp :', filters.filters);
+          }
             const response = await axios.get('/api/expenses/summary-by-category', {
-                params: filters,
+                params: {
+            ...filters.filters,
+                },
             });
 
+    console.log('Response Chart Data:', JSON.stringify(response.data, null, 2));
             // Update state with the response data
             chartData.value = {
                 series: response.data.map(item => Math.abs(parseFloat(item.total))),
@@ -42,6 +51,17 @@ export function useDashboardApi() {
         await fetchData(filters); // Call fetchData with filters
     };
 
+    // Fetch categories on composable initialization
+    const fetchCategories = async () => {
+        try {
+            const response = await axios.get('/api/categories');
+            categories.value = response.data;
+            console.log('categoires ',categories.value);
+        } catch (error) {
+            console.error('Error fetching categories:', error);
+        }
+    }
+
     return {
         isLoading,
         chartData,
@@ -49,5 +69,8 @@ export function useDashboardApi() {
         numberOfExpenses,
         fetchInitialData,
         fetchFilteredData,
+        categories,
+        fetchCategories,
+        filters
     };
 }

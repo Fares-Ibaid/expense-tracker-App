@@ -14,7 +14,11 @@ const {
     totalExpenses,
     numberOfExpenses,
     fetchInitialData,
-    fetchFilteredData
+    fetchFilteredData ,
+    categories,
+    fetchCategories ,
+    filters
+
 } = useDashboardApi();
 
 // Handle filters
@@ -31,7 +35,13 @@ const resetFilters = () => {
 // Fetch initial data on mount
 onMounted(() => {
     fetchInitialData();
+    fetchCategories();
 });
+
+// Define the updateFilters method
+const updateFilters = (updatedFilter) => {
+    Object.assign(filters.value, updatedFilter);
+};
 
 </script>
 
@@ -70,6 +80,9 @@ onMounted(() => {
             target="chart"
             @apply-filters="handleAppFilters"
             @reset-filters="resetFilters"
+            @update-filters="updateFilters"
+            :categories="categories"
+
         />
     </div>
 </template>
