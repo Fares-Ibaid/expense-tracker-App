@@ -31,12 +31,27 @@ class DashboardController extends Controller
               // dd($query->toSql(), $query->getBindings());
            }
 
-        // Filter by Date Range
-        if($request->has('startDate') && $request->has('endDate')) {
+        // Filter by Date Range or Month/Year
+        if ($request->has('startDate') && $request->has('endDate')) {
             $filtersApplied = true;
             $query->whereBetween('date', [$request->query('startDate'), $request->query('endDate')]);
-        }
+      }  elseif ($request->has('month') || $request->has('year')) {
+            $filtersApplied = true;
+            $month = $request->query('month', null); // Null if not provided
+            $year = $request->query('year', date('Y')); // Default to current year if not provided
 
+            if ($month) {
+                // If month is provided, filter for the given month and year
+                $startOfMonth = date("Y-m-d", strtotime("$year-$month-01"));
+                $endOfMonth = date("Y-m-t", strtotime("$year-$month-01"));
+                $query->whereBetween('date', [$startOfMonth, $endOfMonth]);
+            } else {
+                // If only year is provided, filter for the entire year
+                $startOfYear = date("Y-01-01", strtotime("$year-01-01"));
+                $endOfYear = date("Y-12-31", strtotime("$year-01-01"));
+                $query->whereBetween('date', [$startOfYear, $endOfYear]);
+            }
+        }
         // filter by amount
         if($request->has('min_amount') && $request->has('max_amount')) {
             $filtersApplied = true;

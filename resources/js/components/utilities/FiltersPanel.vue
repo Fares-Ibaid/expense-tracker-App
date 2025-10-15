@@ -2,8 +2,6 @@
 import {ref , defineEmits , computed , watch} from 'vue';
 import { debounce } from 'lodash';
 
-// toDo - make live autocomplate for category
-
 const props = defineProps({
    target : {
        type : String,
@@ -13,7 +11,12 @@ const props = defineProps({
         type: Array,
         required: false,
         default: () => []
-    }
+    } ,
+monthsAndYears: {
+    type: Array,
+    required: true,
+    default: () => [],
+}
 });
 
 const emit = defineEmits(['apply-filters' , 'reset-filters','update-filters']);
@@ -22,7 +25,51 @@ const filters = ref({
             minAmount: '',
             maxAmount: '',
             startDate: '',
-            endDate: ''});
+            endDate: '' ,
+            month: '',
+            year: ''
+        });
+
+// -------- filter by months , years ----------------
+const months = ref([]);
+const years = ref([]);
+watch(
+    () => props.monthsAndYears,
+    (newData) => {
+        months.value = [...new Set(newData.map(item => item.month))];
+        years.value = [...new Set(newData.map(item => item.year))];
+    },
+    { immediate: true }
+);
+
+// formating months to full month name
+const monthNames = [
+    "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"
+];
+
+// Example: Map months and years
+const formattedMonthsAndYears = props.monthsAndYears.map(item => ({
+    year: item.year,
+    month: monthNames[item.month - 1] // Convert month number to name
+}));
+
+// ------------------------------ Reactvie watch for filters changes -------------------
+const activeFilter = ref(null); // 'monthYear' or 'dateRange'
+// Method to handle filter activation
+const activateFilter = (filterType) => {
+    activeFilter.value = filterType;
+
+    // Reset the other filter's values
+    if (filterType === 'monthYear') {
+        filters.value.startDate = null;
+        filters.value.endDate = null;
+    } else if (filterType === 'dateRange') {
+        filters.value.month = null;
+        filters.value.year = null;
+    }
+};
+
 // --------------------------------- autocomplete category input -----------------------
 const searchQuery = ref('');
 const dropdownVisible = ref(false);
@@ -67,7 +114,13 @@ const resetFilters = (target) => {
         maxAmount: '',
         startDate: '',
         endDate: '',
+        month : '',
+        year : ''
     };
+    activeFilter.value = null; // Reset active filter
+    searchQuery.value = ''; // Clear the search query for the category input
+
+
     emit('reset-filters', { target });
 
 };
@@ -119,22 +172,26 @@ const applyFilters = async (target) => {
                         </li>
                     </ul>
                 </div>
-
-
+                <!-- Filters for date Range  -->
                 <div class="flex gap-4">
                     <input
                         v-model="filters.startDate"
                         type="date"
                         placeholder="Start Date"
                         class="p-2 border rounded flex-1"
+                        :disabled="activeFilter === 'monthYear'"
+                        @change="activateFilter('dateRange')"
                     />
                     <input
                         v-model="filters.endDate"
                         type="date"
                         placeholder="End Date"
                         class="p-2 border rounded flex-1"
+                        :disabled="activeFilter === 'monthYear'"
+                        @change="activateFilter('dateRange')"
                     />
                 </div>
+                <!-- Filters for Amount  -->
                 <input
                     v-model="filters.minAmount"
                     type="number"
@@ -148,6 +205,33 @@ const applyFilters = async (target) => {
                     class="p-2 border rounded"
                 />
             </div>
+
+            <!--  filter by months , year -->
+            <div class="flex gap-4 mt-4">
+                <select
+                    v-model="filters.month"
+                    :disabled="activeFilter === 'dateRange'"
+                    @change="activateFilter('monthYear')"
+                    class="p-2 border rounded flex-1"
+                >
+                    <option disabled selected>Select Month</option>
+                    <option v-for="month in months" :key="month" :value="month">
+                        {{ monthNames[month - 1] }}
+                    </option>
+                </select>
+
+                <select
+                    v-model="filters.year"
+                    :disabled="activeFilter === 'dateRange'"
+                    @change="activateFilter('monthYear')"
+                    class="p-2 border rounded flex-1">
+                    <option disabled selected>Select Year</option>
+                    <option v-for="year in years" :key="year" :value="year">
+                        {{ year }}
+                    </option>
+                </select>
+            </div>
+            <!-- Buttons -->
             <div class="mt-4 flex justify-end">
                 <button
                     v-if="target === 'table'"

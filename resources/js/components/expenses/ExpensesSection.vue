@@ -18,13 +18,18 @@ const {
     resetFilters,
     changePage,
     categories,
-    fetchCategories
+    fetchCategories ,
+    monthsAndYears,
+    fetchMonthsAndYears
 } = useExpenses();
 
 fetchExpenses();
 fetchCategories();
+fetchMonthsAndYears();
 
-
+/*
+console.log('monthsAndYears:', monthsAndYears, 'fetchMonthsAndYears:', fetchMonthsAndYears());
+*/
 // Define the updateFilters method
 const updateFilters = (updatedFilter) => {
     Object.assign(filters.value, updatedFilter);
@@ -54,6 +59,7 @@ const updateFilters = (updatedFilter) => {
          @resetFilters="resetFilters"
          @update-filters="updateFilters"
          :categories="categories"
+         :months-and-years="monthsAndYears"
          target="table"
 
      />

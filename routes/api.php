@@ -16,6 +16,8 @@ Route::post('/expenses/save', [ExpenseUploadController::class, 'save']);
 // ---------------- ---------------- Summary ----------------------------------
 Route::get('/expenses/summary-by-category', [ExpenseUploadController::class, 'summaryByCategory']);
 
+// ---------------------------------- Expenses Filtering  ----------------------------------
+Route::get('/expenses/available-months-years', [ExpenseController::class, 'getAvailableMonthsAndYears']);
 
 // ---------------------------------- Rules  ----------------------------------
 Route::get('/rules',[RuleController::class,'index']);
