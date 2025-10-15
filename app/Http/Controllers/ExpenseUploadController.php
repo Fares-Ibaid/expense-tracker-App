@@ -165,8 +165,7 @@ class ExpenseUploadController extends Controller
         // Check if no category filter exists
     if (!$request->filled('category')) {
         $data = $query->join('categories', 'expenses.category_id', '=', 'categories.id')
-            ->selectRaw('categories.name as category, SUM(expenses.amount) as total, COUNT(expenses.id) as count')
-            ->groupBy('categories.name')
+            ->selectRaw('categories.name as category, SUM(ABS(expenses.amount)) as total, COUNT(expenses.id) as count')            ->groupBy('categories.name')
             ->get();
         Log::info('Request data:', $request->all());
 
@@ -174,8 +173,7 @@ class ExpenseUploadController extends Controller
         // If a category filter exists, filter by the provided category and group by it
         $data = $query->join('categories', 'expenses.category_id', '=', 'categories.id')
             ->where('categories.name', $request->input('category'))
-            ->selectRaw('categories.name as category, SUM(expenses.amount) as total, COUNT(expenses.id) as count')
-            ->groupBy('categories.name')
+            ->selectRaw('categories.name as category, SUM(ABS(expenses.amount)) as total, COUNT(expenses.id) as count')            ->groupBy('categories.name')
             ->get();
     }
        //dd($data);

@@ -60,6 +60,13 @@ watch(
                         },
                     },
                 },
+                dataLabels: {
+                    style: {
+                        fontSize: '22px', // Adjust this value to make series labels larger
+                        fontWeight: 'bold', // Optional: Make the labels bold
+                    },
+                },
+
             };
         }
     },
@@ -71,7 +78,7 @@ watch(
     <div>
         <apexchart
             type="pie"
-            height="350"
+            height="500"
             :options="chartOptions"
             :series="series"
         />
