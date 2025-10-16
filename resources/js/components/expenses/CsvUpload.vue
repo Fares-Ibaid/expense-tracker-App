@@ -48,7 +48,10 @@ const handleUpload = async () => {
             };
         });
 
-        successMessage.value = response.data.message || 'Upload successful!'
+       successMessage.value = response.data.message || 'Upload successful!';
+       setTimeout(() => {
+           successMessage.value = null;
+       }, 2000); // Hide after 5 seconds
         file.value = null
         error.value = null
 
