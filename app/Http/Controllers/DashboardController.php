@@ -60,8 +60,11 @@ class DashboardController extends Controller
         }
         // pagination
         $perPage  = $request->query('per_page', 5); // this will be changed dynamically from the frontend
+    $totalAmount = $query->clone()->select(DB::raw('SUM(ABS(amount)) as total'))->value('total');
         $expenses = $query->paginate($perPage);
-
+       /* $totalAmount = $query->sum('amount');
+         'totalAmount' => $totalAmount,
+       */
 
         $total = $expenses->total();
         $count = $expenses->count();
@@ -70,6 +73,7 @@ class DashboardController extends Controller
             'expenses' => $expenses,
             'total' => $total,
             'count' => $count,
+            'totalAmount' => $totalAmount
         ]);
 
     }

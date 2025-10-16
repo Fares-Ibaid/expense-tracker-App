@@ -6,6 +6,7 @@ export function useExpenses() {
     const expenses = ref([]);
     const total = ref(0);
     const count = ref(0);
+    const totalAmount = ref(0);
     const filters = ref({});
     const pagination = ref({ page: 1, perPage: 5 });
     const categories = ref([]);
@@ -23,10 +24,11 @@ export function useExpenses() {
                     per_page: pagination.value.perPage,
                 },
             });
-           /* console.log(response.data);*/
+            console.log('which is which ' , response.data);
             expenses.value = response.data.expenses.data;
             total.value = response.data.total;
             count.value = response.data.count;
+            totalAmount.value = response.data.totalAmount;
         } catch (error) {
             console.error('Error fetching expenses:', error);
         }
@@ -83,7 +85,7 @@ export function useExpenses() {
         categories,
         fetchCategories ,
         monthsAndYears,
-        fetchMonthsAndYears
-
+        fetchMonthsAndYears ,
+        totalAmount
     };
 }

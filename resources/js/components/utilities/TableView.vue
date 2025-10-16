@@ -39,18 +39,32 @@ const sortedRows = computed(() => {
       return filteredRows.value;
     }
 
-    return [...filteredRows.value].sort((a, b) => {
-      const aValue = a[sortKey.value];
-      const bValue = b[sortKey.value];
+   return [...filteredRows.value].sort((a, b) => {
+     const aValue = a[sortKey.value];
+     const bValue = b[sortKey.value];
 
-      // Handle cases where values are null or undefined
-      if (aValue == null && bValue == null) return 0;
-      if (aValue == null) return sortOrder.value;
-      if (bValue == null) return -sortOrder.value;
+     // Handle cases where values are null or undefined
+     if (aValue === bValue) return 0;
 
-      // Compare values for sorting
-      return aValue > bValue ? sortOrder.value : -sortOrder.value;
-    });
+     // Check if the values are dates
+     if (Date.parse(aValue) && Date.parse(bValue)) {
+       return new Date(aValue) > new Date(bValue) ? sortOrder.value : -sortOrder.value;
+     }
+
+     // Check if the values are numbers
+     const aNum = parseFloat(aValue);
+     const bNum = parseFloat(bValue);
+     if (!isNaN(aNum) && !isNaN(bNum)) {
+       return aNum > bNum ? sortOrder.value : -sortOrder.value;
+     }
+
+     // Default to string comparison
+       // Default to case-insensitive string comparison
+       return String(aValue).toLowerCase().localeCompare(String(bValue).toLowerCase()) * sortOrder.value;
+   });
+
+
+
   });
 
 
