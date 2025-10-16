@@ -45,6 +45,9 @@ const updateFilters = (updatedFilter) => {
 @save-success="() => {
         $emit('update:key', Date.now()); // Trigger parent re-render by updating the key
 }"
+@reset="() => {
+        $emit('update:key', Date.now()); // Trigger parent re-render by updating the key
+}"
     class="mb-4 border border-gray-300 p-2" />
 
      <!-- Summary Card -->

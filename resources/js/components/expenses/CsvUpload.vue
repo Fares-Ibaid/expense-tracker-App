@@ -197,6 +197,13 @@ const fetchCategoriesAndRules = async () => {
                 >
                     Save to Expenses
                 </button>
+
+                <button
+                    @click="$emit('reset')"
+                    class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 ml-2"
+                >
+                    Cancel
+                </button>
             </div>
         </div>
     </div>
