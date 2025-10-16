@@ -56,7 +56,7 @@ const updateFilters = (updatedFilter) => {
          <SummaryCard title="Total Expenses" :value="total" valueClass="text-xl font-bold text-blue-600" />
          <SummaryCard title="Filtered Count" :value="count" valueClass="text-xl font-bold text-green-600" />
 <SummaryCard
-    title="Other Metric"
+    title="Total Amount"
     :value="new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(totalAmount)"
     valueClass="text-xl font-bold text-red-600"
 />     </div>
