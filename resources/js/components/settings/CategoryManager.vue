@@ -1,5 +1,5 @@
 <script setup>
-import {ref, onMounted, nextTick} from 'vue'
+import {ref, onMounted, nextTick , defineEmits} from 'vue'
 import ToastNotification from "@/components/utilities/ToastNotification.vue";
 import axios from "axios";
 
@@ -15,6 +15,8 @@ const showToast = ref(false)
 const toastMessage = ref('')
 const toastType = ref('success')
 
+// define the emits
+const emit = defineEmits(['category-changed']);
 
 // toDo - refactor this
 onMounted(async () => {
@@ -35,8 +37,11 @@ const AddCategory = async() => {
     try {
         const response = await axios.post('/api/categories', { name: newCategory.value });
         await loadCategories();
-        newCategory.value = '';
-        triggerToast('Category added successfully.', 'success');
+     triggerToast('Category added successfully.', 'success');
+     setTimeout(() => {
+         emit('category-changed', newCategory.value);
+         newCategory.value = '';
+     }, 3000);
     } catch (error) {
         triggerToast('Error adding category.', 'error');
         console.error('Error adding category:', error);
@@ -60,6 +65,10 @@ const saveEdit = async () => {
       await loadCategories();
         editingCategory.value = null;
         triggerToast('Category updated successfully.', 'success');
+
+        setTimeout(() => {
+            emit('category-changed', '');
+        }, 3000);
     } catch (error) {
         triggerToast('Error updating category.', 'error');
         console.error('Error updating category:', error);
@@ -84,6 +93,10 @@ const confirmDelete = async () => {
         await axios.delete(`/api/categories/${categoryToDelete.value.id}`);
         triggerToast('Category deleted successfully.', 'success');
         await loadCategories();
+
+        setTimeout(() => {
+            emit('category-changed', '');
+        }, 3000);
     } catch (error) {
         if (error.response && error.response.status === 400) {
             triggerToast(error.response.data.error, 'warning');

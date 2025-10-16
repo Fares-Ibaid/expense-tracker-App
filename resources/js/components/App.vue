@@ -41,7 +41,9 @@ const switchView = (view) => {
             <ExpensesSection
                 :key="key" @update:key="key = $event"
                 v-if="currentView === 'expenses'"/>
-           <SettingsPanel v-if="currentView === 'settings'"/>
+           <SettingsPanel
+               :key="key" @update:key="key = $event"
+               v-if="currentView === 'settings'"/>
            <ReportSection v-if="currentView === 'reports'"/>
         </main>
     </div>

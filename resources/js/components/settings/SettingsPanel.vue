@@ -1,5 +1,5 @@
 <script setup>
-import { ref , onMounted , nextTick  } from 'vue'
+import {ref, onMounted, nextTick, defineEmits} from 'vue'
 import ConfirmModal from "@/components/utilities/ConfirmModal.vue";
 import ToastNotification from "@/components/utilities/ToastNotification.vue";
 import CategoryManager from "@/components/settings/CategoryManager.vue";
@@ -179,6 +179,13 @@ function triggerToast(msg, type = 'success') {
     nextTick(() => showToast.value = true)
 }
 
+
+// --------------- listen to emits -----------
+const emit = defineEmits(['update:key']);
+const onCategoryAdded = (newCategory) => {
+    console.log('Category added:', newCategory);
+    emit('update:key', Date.now());
+};
 </script>
 
 <template>
@@ -198,7 +205,7 @@ function triggerToast(msg, type = 'success') {
     </div>
 </div>
     <div class="space-y-8">
-        <CategoryManager/>
+      <CategoryManager @category-changed="onCategoryAdded" />
 
         <!-- Rules Section -->
         <section>
