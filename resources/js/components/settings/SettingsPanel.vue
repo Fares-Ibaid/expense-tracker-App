@@ -48,9 +48,6 @@ onMounted(async () =>{
 
         categorizedCount.value = counts.categorized;
         uncategorizedCount.value = counts.uncategorized;
-        console.log('Categorized:', counts.categorized);
-        console.log('Uncategorized:', counts.uncategorized);
-
 
         // fetching categories
         const catResponse = await axios.get('/api/categories')
@@ -183,7 +180,6 @@ function triggerToast(msg, type = 'success') {
 // --------------- listen to emits -----------
 const emit = defineEmits(['update:key']);
 const onCategoryAdded = (newCategory) => {
-    console.log('Category added:', newCategory);
     emit('update:key', Date.now());
 };
 </script>

@@ -30,9 +30,7 @@ fetchExpenses();
 fetchCategories();
 fetchMonthsAndYears();
 
-/*
-console.log('monthsAndYears:', monthsAndYears, 'fetchMonthsAndYears:', fetchMonthsAndYears());
-*/
+
 // Define the updateFilters method
 const updateFilters = (updatedFilter) => {
     Object.assign(filters.value, updatedFilter);

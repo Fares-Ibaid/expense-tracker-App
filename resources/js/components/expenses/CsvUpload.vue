@@ -68,7 +68,6 @@ const handleSave = async() => {
     const validExpenses = rows.value.filter(row => row.description && row.description.trim() !== '')
 
     try {
-        //console.log('Sending expenses:', rows.value) ;
 
         // sending data as json
         const response = await axios.post('api/expenses/save',{
@@ -159,7 +158,6 @@ const fetchCategoriesAndRules = async () => {
                         row.duplicated ? 'bg-yellow-100' : (row.isValid ? 'bg-green-800 text-white hover:bg-green-600' : 'bg-red-50 text-red-800')
                     ]"
 
-                    @click="console.log('Row:', row, 'Duplicated:', row.duplicated)"
                 >
                     <td class="border px-2 py-2 text-center align-middle">{{ row.date || '—' }}</td>
 

@@ -77,7 +77,6 @@ const sortBy = (key) => {
     sortOrder.value = 1; // Default to ascending
   }
 
- /* console.log('sortKey:', sortKey.value, 'sortOrder:', sortOrder.value);*/
 };
 
 

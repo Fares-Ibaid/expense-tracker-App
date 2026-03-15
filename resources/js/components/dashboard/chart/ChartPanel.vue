@@ -33,7 +33,6 @@ const chartOptions = ref({
 watch(
     () => props.chartData,
     (newData) => {
-        console.log('chartData:', newData);
         if (newData && newData.series && newData.labels) {
             series.value = newData.series.map(value => Number(value));
 

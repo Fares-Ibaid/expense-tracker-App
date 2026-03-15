@@ -78,9 +78,7 @@ const saveEdit = async () => {
 
 // delete Category
 const askDelete = (category) => {
-    console.log('get triggered' , category)
     categoryToDelete.value = category;
-    console.log(categoryToDelete.value);
 }
 
 
@@ -88,7 +86,6 @@ const askDelete = (category) => {
 
 const confirmDelete = async () => {
     if (!categoryToDelete.value) return;
-    console.log('delete cofirm', categoryToDelete.value);
     try {
         await axios.delete(`/api/categories/${categoryToDelete.value.id}`);
         triggerToast('Category deleted successfully.', 'success');

@@ -17,9 +17,7 @@ export function useDashboardApi() {
     const fetchData = async (filters = {}) => {
         try {
             isLoading.value = true;
-            console.log('Filterssss : ', filters.filters);
           if (filters?.filters && Object.keys(filters.filters).length > 0) {
-              console.log('filtering inside dashboardComp :', filters.filters);
           }
             const response = await axios.get('/api/expenses/summary-by-category', {
                 params: {
@@ -27,7 +25,6 @@ export function useDashboardApi() {
                 },
             });
 
-    console.log('Response Chart Data ttttt:', JSON.stringify(response.data, null, 2));
             // Update state with the response data
             chartData.value = {
                 series: response.data.map(item => Math.abs(parseFloat(item.total))),
@@ -58,7 +55,6 @@ export function useDashboardApi() {
         try {
             const response = await axios.get('/api/categories');
             categories.value = response.data;
-            console.log('categoires ',categories.value);
         } catch (error) {
             console.error('Error fetching categories:', error);
         }
@@ -68,7 +64,6 @@ export function useDashboardApi() {
     const fetchMonthsAndYears = async () => {
         try {
             const response = await axios.get('/api/expenses/available-months-years');
-            console.log('months and years response', response.data);
             monthsAndYears.value = response.data;
         } catch (error) {
             console.error('Failed to fetch months and years:', error);

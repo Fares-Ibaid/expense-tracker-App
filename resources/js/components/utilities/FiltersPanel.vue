@@ -88,7 +88,6 @@ const filteredCategories = computed(() =>
 const selectCategory = (category) => {
     filters.value.category = category.name;
     emit('update-filters', { category: filters.value.category  });
-    console.log('category' , category.name);
     searchQuery.value = category.name; // Set the selected category name in the input
     dropdownVisible.value = false;
 };
@@ -134,7 +133,6 @@ const buttonClass = computed(() =>{
 
 // Define the applyFilters method
 const applyFilters = async (target) => {
-    console.log('applyFilters' , filters.value);
     loading.value = true; // Show spinner
     try {
         await new Promise(resolve => setTimeout(resolve, 2000)); // Simulate delay

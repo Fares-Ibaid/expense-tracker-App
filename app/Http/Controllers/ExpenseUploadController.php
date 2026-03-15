@@ -176,7 +176,6 @@ class ExpenseUploadController extends Controller
             ->selectRaw('categories.name as category, SUM(ABS(expenses.amount)) as total, COUNT(expenses.id) as count')            ->groupBy('categories.name')
             ->get();
     }
-       //dd($data);
 
         return response()->json($data);
     }

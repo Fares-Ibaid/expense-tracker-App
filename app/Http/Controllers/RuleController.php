@@ -19,8 +19,6 @@ class RuleController extends Controller
 
     public  function  store(Request $request)
     {
-        //dd('Store method reached!', $request->all());
-
         $validated = $request->validate([
             'field' =>  ['required', ValidationRule::in(['description', 'amount'])],
             'match_type' => ['required', ValidationRule::in(['contains', 'equals', 'regex'])],

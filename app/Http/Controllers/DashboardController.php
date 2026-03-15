@@ -23,12 +23,8 @@ class DashboardController extends Controller
                $filtersApplied = true;
                $query->whereHas('category', function ($q) use ($request) {
                    $q->where('name', $request->query('category'));
-                  // $q->where('name', 'LIKE', $request->query('category'));
-                //   $q->where('name', $request->query('category', ''));
-                //   $q->whereRaw('LOWER(name) = ?', [strtolower($request->query('category'))]);
                });
-               // Dump the query
-              // dd($query->toSql(), $query->getBindings());
+
            }
 
         // Filter by Date Range or Month/Year
@@ -37,7 +33,6 @@ class DashboardController extends Controller
             $query->whereBetween('date', [$request->query('startDate'), $request->query('endDate')]);
          }elseif ($request->filled('month') || $request->filled('year')) {
                 $filtersApplied = true;
-                //dd($request->all());
                 $month = $request->query('month', null); // Null if not provided
                 $year = $request->query('year', date('Y')); // Default to current year if not provided
 

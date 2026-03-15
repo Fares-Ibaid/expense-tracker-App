@@ -12,7 +12,6 @@ trait Filterable
     protected function applyFilters(Request $request, Builder $query)
     {
 
-       // dd($request->all());
     // Filter by category
     if ($request->filled('category')) {
         $query->whereHas('category', function ($q) use ($request) {
