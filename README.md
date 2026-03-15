@@ -1,66 +1,238 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Expense Tracker App
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
+<p align="left">
+  <img alt="Laravel" src="https://img.shields.io/badge/Laravel-11-FF2D20?logo=laravel&logoColor=white">
+  <img alt="Vue" src="https://img.shields.io/badge/Vue-3-4FC08D?logo=vuedotjs&logoColor=white">
+  <img alt="Vite" src="https://img.shields.io/badge/Vite-Frontend-646CFF?logo=vite&logoColor=white">
+  <img alt="MySQL" src="https://img.shields.io/badge/MySQL-Database-4479A1?logo=mysql&logoColor=white">
+  <img alt="License" src="https://img.shields.io/badge/License-MIT-blue.svg">
 </p>
 
-## About Laravel
+A full-stack expense tracking app built with Laravel + Vue 3 to import bank CSV transactions, auto-categorize them with rules, and analyze spending with dashboards and reports.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- Backend: Laravel (API)
+- Frontend: Vue 3 + Vite
+- Database: MySQL (`expense_tracker`)
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+---
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## ? Table of Contents
 
-## Learning Laravel
+- [? What the project does](#-what-the-project-does)
+- [? Main Modules](#-main-modules)
+- [? Workflow (High Level)](#-workflow-high-level)
+- [?? Data Model (Core)](#?-data-model-core)
+- [? API Snapshot](#-api-snapshot)
+- [?? Screenshots / Demo](#?-screenshots--demo)
+- [? Quick Start](#-quick-start)
+- [? Important Paths](#-important-paths)
+- [?? Roadmap](#?-roadmap)
+- [? Contributing](#-contributing)
+- [? Notes](#-notes)
+- [? License](#-license)
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+---
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+## ? What the project does
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+- Uploads transaction CSV files and parses them safely
+- Detects possible duplicate transactions before saving
+- Auto-categorizes expenses using rule matching (`contains`, `equals`, `regex`)
+- Lets you manage categories and rules from settings
+- Provides dashboard filtering and paginated expense browsing
+- Generates report summaries by category
 
-## Laravel Sponsors
+---
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+## ? Main Modules
 
-### Premium Partners
+### ?? Frontend (Vue SPA)
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+Main entry is `resources/js/components/App.vue`.
 
-## Contributing
+- `DashboardSection` - filtering, list, pagination, totals
+- `ExpensesSection` - CSV upload + preview + save
+- `SettingsPanel` - categories/rules management
+- `ReportSection` - summary/report views
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+Reusable API/state logic lives in:
 
-## Code of Conduct
+- `resources/js/composables/useExpenses.js`
+- `resources/js/composables/useDashboardApi.js`
+- `resources/js/composables/useSettingsPanel.js`
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### ?? Backend API (Laravel Controllers)
 
-## Security Vulnerabilities
+- `DashboardController`
+  - `GET /api/dashboard`
+  - Returns filtered, paginated expenses + totals
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+- `ExpenseUploadController`
+  - `POST /api/expenses/upload`
+  - `POST /api/expenses/save`
+  - `GET /api/expenses/summary-by-category`
+  - Handles CSV parsing, normalization, duplicate checks, auto-categorization, persistence
 
-## License
+- `CategoryController`
+  - Category CRUD
+  - Categorized vs uncategorized counts
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+- `RuleController`
+  - Rule CRUD
+  - Re-applies new/updated rules to uncategorized expenses
+
+- `ExpenseController`
+  - `GET /api/expenses/available-months-years`
+  - Supports date filter UI options
+
+---
+
+## ? Workflow (High Level)
+
+1. User uploads CSV in Expenses view
+2. Backend parses rows (date/amount/description)
+3. Existing rows are checked for duplicates
+4. Rules attempt auto-categorization
+5. Preview is returned to frontend
+6. User confirms save
+7. Non-duplicate rows are inserted into DB
+8. Dashboard and reports reflect new totals
+
+For full architecture diagram, see `WORKFLOW.md`.
+
+---
+
+## ?? Data Model (Core)
+
+- `Category` has many `Expense`
+- `Category` has many `Rule`
+- `Expense` belongs to `Category`
+- `Expense`, `Category`, `Rule` include `user_id` fields for user scoping
+
+---
+
+## ? API Snapshot
+
+- `GET /api/dashboard`
+- `POST /api/expenses/upload`
+- `POST /api/expenses/save`
+- `GET /api/expenses/summary-by-category`
+- `GET /api/expenses/available-months-years`
+- `GET|POST|PUT|DELETE /api/categories`
+- `GET|POST|PUT|DELETE /api/rules`
+- `GET /api/categories/categorized-counts`
+
+---
+
+## ?? Screenshots / Demo
+
+Add screenshots to `docs/images/` and reference them here.
+
+```md
+![Dashboard](docs/images/dashboard.png)
+![CSV Upload Preview](docs/images/csv-upload-preview.png)
+![Settings - Rules](docs/images/settings-rules.png)
+![Reports](docs/images/reports.png)
+```
+
+Optional demo GIF:
+
+```md
+![Demo](docs/images/demo.gif)
+```
+
+---
+
+## ? Quick Start
+
+### 1) Install dependencies
+
+```bash
+composer install
+npm install
+```
+
+### 2) Configure environment
+
+```bash
+cp .env.example .env
+php artisan key:generate
+```
+
+Set DB values in `.env` (MySQL):
+
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=expense_tracker
+DB_USERNAME=root
+DB_PASSWORD=
+```
+
+### 3) Migrate database
+
+```bash
+php artisan migrate
+```
+
+### 4) Run app
+
+```bash
+php artisan serve
+npm run dev
+```
+
+---
+
+## ? Important Paths
+
+- `app/Http/Controllers/` - API controllers
+- `app/Models/` - Eloquent models
+- `routes/api.php` - API routes
+- `resources/js/components/` - Vue UI modules
+- `resources/js/composables/` - Frontend logic
+- `database/migrations/` - Schema definitions
+
+---
+
+## ?? Roadmap
+
+- [ ] Add authentication and user-specific dashboards
+- [ ] Add recurring expense detection
+- [ ] Add export to CSV/PDF for reports
+- [ ] Add monthly budget targets and alerts
+- [ ] Add automated tests for CSV import and rule matching
+
+---
+
+## ? Contributing
+
+Contributions are welcome.
+
+1. Fork the repo
+2. Create a feature branch
+3. Commit your changes
+4. Open a pull request
+
+Example:
+
+```bash
+git checkout -b feature/improve-rule-matching
+git commit -m "Improve rule matching performance"
+git push origin feature/improve-rule-matching
+```
+
+---
+
+## ? Notes
+
+- The project uses a catch-all web route to serve the SPA shell.
+- Most app interactions happen through `/api/*` endpoints.
+- Rule quality directly improves auto-categorization accuracy over time.
+
+---
+
+## ? License
+
+This project is licensed under the MIT License.
