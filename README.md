@@ -55,7 +55,7 @@ Main controllers:
 - `DashboardController` — filtered expense listing and totals
 - `ExpenseUploadController` — CSV parsing, duplicate detection, preview, save, category summary
 - `ExpenseController` — available months/years for filters
-- `CategoryController` — category CRUD and categorized-count stats
+- `CategoryController` — category CRUD and categorized-counts stats
 - `RuleController` — rule CRUD and rule re-application logic
 
 ### 🗄️ Data layer
@@ -148,6 +148,23 @@ For the full ASCII workflow diagram, see `WORKFLOW.md`.
 
 ### Settings - Rules
 ![Settings - Rules](docs/images/settings-rules.png)
+
+---
+
+## 📥 Manual CSV Input
+
+A sample transaction file is included in the repository:
+
+- `database/seed-data/transaktionen_seeder.csv`
+
+After starting the app, import it manually from the UI:
+
+1. Open the app in your browser
+2. Go to the **Expenses** section
+3. Use the CSV upload area to select `transaktionen_seeder.csv`
+4. Review the preview and confirm save
+
+> Note: this file is a manual import source, not an automatic Laravel seeder.
 
 ---
 
