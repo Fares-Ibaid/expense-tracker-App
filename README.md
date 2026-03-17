@@ -16,20 +16,84 @@ A full-stack expense tracking app built with Laravel + Vue 3 to import bank CSV 
 
 ---
 
-## ? Table of Contents
+## 📚 Table of Contents
 
-- [? What the project does](#-what-the-project-does)
-- [? Main Modules](#-main-modules)
-- [? Workflow (High Level)](#-workflow-high-level)
-- [?? Data Model (Core)](#?-data-model-core)
-- [? API Snapshot](#-api-snapshot)
-- [?? Screenshots / Demo](#?-screenshots--demo)
-- [? Quick Start](#-quick-start)
-- [? Important Paths](#-important-paths)
-- [?? Roadmap](#?-roadmap)
-- [? Contributing](#-contributing)
-- [? Notes](#-notes)
-- [? License](#-license)
+- [✅ What the project does](#-what-the-project-does)
+- [🧩 Main Modules](#-main-modules)
+- [🔄 Workflow (High Level)](#-workflow-high-level)
+- [🗃️ Data Model (Core)](#-data-model-core)
+- [📡 API Snapshot](#-api-snapshot)
+- [🖼️ Screenshots / Demo](#-screenshots--demo)
+- [⚡ Quick Start](#-quick-start)
+- [📁 Important Paths](#-important-paths)
+- [🛣️ Roadmap](#-roadmap)
+- [🤝 Contributing](#-contributing)
+- [📝 Notes](#-notes)
+- [📄 License](#-license)
+
+---
+
+## ✅ What the project does
+...
+---
+
+## 🧩 Main Modules
+
+### 🖥️ Frontend (Vue SPA)
+...
+
+### 🛠️ Backend API (Laravel Controllers)
+...
+
+---
+
+## 🔄 Workflow (High Level)
+...
+
+---
+
+## 🗃️ Data Model (Core)
+...
+
+---
+
+## 📡 API Snapshot
+...
+
+---
+
+## 🖼️ Screenshots / Demo
+...
+
+---
+
+## ⚡ Quick Start
+...
+
+---
+
+## 📁 Important Paths
+...
+
+---
+
+## 🛣️ Roadmap
+...
+
+---
+
+## 🤝 Contributing
+...
+
+---
+
+## 📝 Notes
+...
+
+---
+
+## 📄 License
+...
 
 ---
 
